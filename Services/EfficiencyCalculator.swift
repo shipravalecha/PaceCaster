@@ -32,4 +32,11 @@ enum EfficiencyCalculator {
         let sortedByEF = top3.sorted { ($0.efficiencyFactor ?? 0) < ($1.efficiencyFactor ?? 0) }
         return sortedByEF[sortedByEF.count / 2]
     }
+    
+    /// Second-most-recent qualifying run, used to compute trend vs the current baseline.
+    static func previousBaseline(_ workouts: [RunWorkout]) -> RunWorkout? {
+        let qualifying = workouts.filter { $0.isSteadyState }.sorted { $0.startDate > $1.startDate }
+        guard qualifying.count >= 2 else { return nil }
+        return qualifying[1]
+    }
 }

@@ -46,7 +46,14 @@ struct MainDashboardView: View {
             } else if let ef = viewModel.aerobicBaselineEF {
                 VStack(spacing: 4) {
                     Text("Aerobic Baseline").font(.subheadline).foregroundStyle(.secondary)
-                    Text(String(format: "%.2f", ef)).font(.system(size: 48, weight: .bold, design: .rounded))
+                    
+                    HStack(spacing: 8) {
+                        Text(String(format: "%.2f", ef)).font(.system(size: 48, weight: .bold, design: .rounded))
+                        if let direction = viewModel.efTrendDirection, let percent = viewModel.efTrendPercentDisplay {
+                            trendBadge(direction: direction, percent: percent)
+                        }
+                    }
+
                     if let date = viewModel.baselineDate {
                         Text("from run on \(date.formatted(date: .abbreviated, time: .omitted))")
                             .font(.caption)
@@ -143,5 +150,27 @@ struct MainDashboardView: View {
         .padding()
         .background(.thinMaterial, in: RoundedRectangle(cornerRadius: 16))
         .animation(.easeInOut(duration: 0.1), value: viewModel.predictedFinishTime)
+    }
+    
+    @ViewBuilder
+    private func trendBadge(direction: DashboardViewModel.EFTrendDirection, percent: String) -> some View {
+        let (icon, color): (String, Color) = {
+            switch direction {
+            case .up: return ("arrow.up", .green)
+            case .down: return ("arrow.down", .red)
+            case .flat: return ("minus", .secondary)
+            }
+        }()
+
+        HStack(spacing: 2) {
+            Image(systemName: icon)
+            Text(percent)
+        }
+        .font(.caption.weight(.semibold))
+        .foregroundStyle(color)
+        .padding(.horizontal, 8)
+        .padding(.vertical, 4)
+        .background(color.opacity(0.12), in: Capsule())
+        .padding(.bottom, 8) // align baseline with the large number's baseline
     }
 }

@@ -25,7 +25,13 @@ final class DashboardViewModel: ObservableObject {
     @Published var castBasisDisplay: String?
     @Published var recentRunNote: String?
     @Published var latestRunHRIsFlagged: Bool = false
+    enum EFTrendDirection {
+        case up, down, flat
+    }
 
+    @Published var efTrendDirection: EFTrendDirection?
+    @Published var efTrendPercentDisplay: String?
+    
     private var modelContext: ModelContext?
     private var allWorkouts: [RunWorkout] = []
     private let settings: AppSettings
@@ -49,6 +55,22 @@ final class DashboardViewModel: ObservableObject {
         let baseline = EfficiencyCalculator.latestBaseline(allWorkouts)
         aerobicBaselineEF = baseline?.efficiencyFactor
         baselineDate = baseline?.startDate
+        
+        if let currentEF = baseline?.efficiencyFactor,
+           let previous = EfficiencyCalculator.previousBaseline(allWorkouts),
+           let previousEF = previous.efficiencyFactor,
+           previousEF > 0 {
+            let percentChange = ((currentEF - previousEF) / previousEF) * 100
+            efTrendPercentDisplay = String(format: "%.1f%%", abs(percentChange))
+            if abs(percentChange) < 0.5 {
+                efTrendDirection = .flat
+            } else {
+                efTrendDirection = percentChange > 0 ? .up : .down
+            }
+        } else {
+            efTrendDirection = nil
+            efTrendPercentDisplay = nil
+        }
 
         // Stats row: most recent run OVERALL, regardless of qualification
         let mostRecent = allWorkouts.first
