@@ -18,14 +18,6 @@ struct HealthSyncSettingsView: View {
 
     var body: some View {
         Form {
-            Section {
-                HStack {
-                    Text("Last Synced")
-                    Spacer()
-                    Text(lastSyncedDisplay)
-                        .foregroundStyle(.secondary)
-                }
-            }
             Section("HealthKit Access") {
                 statusRow(title: "Workouts", type: HKObjectType.workoutType())
                 statusRow(title: "Heart Rate", type: HKObjectType.quantityType(forIdentifier: .heartRate)!)
@@ -35,6 +27,29 @@ struct HealthSyncSettingsView: View {
                     if let url = URL(string: UIApplication.openSettingsURLString) {
                         UIApplication.shared.open(url)
                     }
+                }
+            }
+            
+            Section {
+                HStack {
+                    Text("Last Synced")
+                    Spacer()
+                    Text(lastSyncedDisplay)
+                        .foregroundStyle(.secondary)
+                }
+            }
+            Button("Sync Now") {
+                Task {
+                    let workouts = (try? await healthKitManager.scanLast90Days()) ?? []
+                    for workout in workouts {
+                        let uuid = workout.healthKitUUID
+                        let descriptor = FetchDescriptor<RunWorkout>(predicate: #Predicate { $0.healthKitUUID == uuid })
+                        if (try? modelContext.fetch(descriptor))?.isEmpty ?? true {
+                            modelContext.insert(workout)
+                        }
+                    }
+                    try? modelContext.save()
+                    settings.lastSyncedAt = Date()
                 }
             }
 

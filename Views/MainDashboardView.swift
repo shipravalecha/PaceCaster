@@ -52,6 +52,13 @@ struct MainDashboardView: View {
                             .font(.caption)
                             .foregroundStyle(.tertiary)
                     }
+                    if let note = viewModel.recentRunNote {
+                        Text(note)
+                            .font(.caption)
+                            .foregroundStyle(.orange)
+                            .multilineTextAlignment(.center)
+                            .padding(.top, 2)
+                    }
                 }
 
                 Divider()

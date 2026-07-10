@@ -29,6 +29,12 @@ struct RootView: View {
                 }
             }
         }
+        .task {
+                // Re-register the observer on every cold launch, not just the first one.
+                if settings.hasCompletedOnboarding {
+                    registerSync()
+                }
+            }
     }
 
     private var scanningView: some View {
@@ -59,6 +65,16 @@ struct RootView: View {
         settings.hasCompletedOnboarding = true
         didFinishSetup = true
         isScanning = false
+    }
+    
+    private func registerSync() {
+        healthKitManager.registerObserverQuery { newWorkout in
+            Task { @MainActor in
+                self.insertIfNew(newWorkout)
+                try? self.modelContext.save()
+                self.settings.lastSyncedAt = Date()
+            }
+        }
     }
 
     /// Req 2.6: dedupe by HealthKit workout UUID
