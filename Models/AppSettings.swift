@@ -23,10 +23,18 @@ final class AppSettings: ObservableObject {
     @Published var hasCompletedOnboarding: Bool {
         didSet { UserDefaults.standard.set(hasCompletedOnboarding, forKey: Keys.onboarded) }
     }
+    @Published var lastSyncedAt: Date? {
+        didSet {
+            if let lastSyncedAt {
+                UserDefaults.standard.set(lastSyncedAt, forKey: Keys.lastSynced)
+            }
+        }
+    }
 
     private enum Keys {
         static let unit = "measurementUnit"
         static let onboarded = "hasCompletedOnboarding"
+        static let lastSynced = "lastSyncedAt"
     }
 
     private init() {
@@ -39,5 +47,6 @@ final class AppSettings: ObservableObject {
             measurementUnit = isUS ? .miles : .kilometers
         }
         hasCompletedOnboarding = UserDefaults.standard.bool(forKey: Keys.onboarded)
+        lastSyncedAt = UserDefaults.standard.object(forKey: Keys.lastSynced) as? Date
     }
 }

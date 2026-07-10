@@ -46,11 +46,13 @@ struct RootView: View {
             insertIfNew(workout)
         }
         try? modelContext.save()
+        settings.lastSyncedAt = Date()
 
         healthKitManager.registerObserverQuery { newWorkout in
             Task { @MainActor in
                 self.insertIfNew(newWorkout)
                 try? self.modelContext.save()
+                self.settings.lastSyncedAt = Date()
             }
         }
 

@@ -18,6 +18,14 @@ struct HealthSyncSettingsView: View {
 
     var body: some View {
         Form {
+            Section {
+                HStack {
+                    Text("Last Synced")
+                    Spacer()
+                    Text(lastSyncedDisplay)
+                        .foregroundStyle(.secondary)
+                }
+            }
             Section("HealthKit Access") {
                 statusRow(title: "Workouts", type: HKObjectType.workoutType())
                 statusRow(title: "Heart Rate", type: HKObjectType.quantityType(forIdentifier: .heartRate)!)
@@ -66,6 +74,10 @@ struct HealthSyncSettingsView: View {
         } message: {
             Text(flushError ?? "")
         }
+    }
+    private var lastSyncedDisplay: String {
+        guard let date = settings.lastSyncedAt else { return "Never" }
+        return date.formatted(.relative(presentation: .named))
     }
 
     private func statusRow(title: String, type: HKObjectType) -> some View {
