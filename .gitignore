@@ -1,0 +1,61 @@
+
+# Xcode
+#
+# gitignore contributors: remember to update Global/Xcode.gitignore, Objective-C.gitignore & Swift.gitignore
+
+## User settings
+xcuserdata/
+
+## Xcode 8 and earlier
+*.xcscmblueprint
+*.xccheckout
+
+## Compatibility with Xcode 3 and earlier (ignoring not required for later versions)
+*.moved-aside
+*.pbxuser
+!default.pbxuser
+*.mode1v3
+!default.mode1v3
+*.mode2v3
+!default.mode2v3
+*.perspectivev3
+!default.perspectivev3
+
+## Obj-C/Swift specific
+*.hmap
+
+## App packaging
+*.ipa
+*.dSYM.zip
+*.dSYM
+
+## Playgrounds
+timeline.xctimeline
+playground.xcworkspace
+
+# Swift Package Manager
+.build/
+.swiftpm/
+Package.resolved
+
+# Code Injection
+iOSInjectionProject/
+
+# macOS
+.DS_Store
+
+# SwiftData / Core Data local stores — never commit local device databases
+*.sqlite
+*.sqlite-shm
+*.sqlite-wal
+
+# Simulator build artifacts
+DerivedData/
+
+# Xcode Previews / instruments traces
+*.trace
+*.xcresult/
+
+# Local environment / secrets — none currently, but safe to have as the project grows
+.env
+*.xcconfig.local

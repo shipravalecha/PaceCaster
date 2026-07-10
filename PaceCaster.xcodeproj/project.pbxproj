@@ -6,13 +6,57 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		0185184D300054BE0005B85D /* RunWorkout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0185183F300044F00005B85D /* RunWorkout.swift */; };
+		0185184E300054CA0005B85D /* AppSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01851840300045110005B85D /* AppSettings.swift */; };
+		0185184F300054CF0005B85D /* PredictionEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01851841300045290005B85D /* PredictionEngine.swift */; };
+		01851850300054D30005B85D /* EfficiencyCalculator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01851842300045410005B85D /* EfficiencyCalculator.swift */; };
+		01851851300054D70005B85D /* HealthKitManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01851843300045560005B85D /* HealthKitManager.swift */; };
+		01851852300054DB0005B85D /* DashboardViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01851844300052620005B85D /* DashboardViewModel.swift */; };
+		01851853300054DF0005B85D /* AnalyticsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 018518453000527C0005B85D /* AnalyticsViewModel.swift */; };
+		01851854300054E90005B85D /* WelcomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 018518463000528B0005B85D /* WelcomeView.swift */; };
+		01851855300054ED0005B85D /* MainDashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01851847300052980005B85D /* MainDashboardView.swift */; };
+		01851856300054F10005B85D /* MetricsAnalyticsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01851848300052A70005B85D /* MetricsAnalyticsView.swift */; };
+		01851857300054F50005B85D /* HealthSyncSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01851849300052B30005B85D /* HealthSyncSettingsView.swift */; };
+		01851858300054F90005B85D /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0185184A300052C00005B85D /* RootView.swift */; };
+		0185185A300058320005B85D /* DebugSeeder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01851859300058300005B85D /* DebugSeeder.swift */; };
+		0185185E30016A9D0005B85D /* .gitignore in Resources */ = {isa = PBXBuildFile; fileRef = 0185185D30016A960005B85D /* .gitignore */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
-		01851828300042950005B85D /* PaceCaster.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PaceCaster.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		01851828300042950005B85D /* PaceCaster.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; name = PaceCaster.app; path = "/Users/shipravalecha/Desktop/HomeAssignments/PaceCaster/PaceCaster/build/Debug-iphoneos/PaceCaster.app"; sourceTree = "<absolute>"; };
+		0185183F300044F00005B85D /* RunWorkout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RunWorkout.swift; sourceTree = "<group>"; };
+		01851840300045110005B85D /* AppSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSettings.swift; sourceTree = "<group>"; };
+		01851841300045290005B85D /* PredictionEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PredictionEngine.swift; sourceTree = "<group>"; };
+		01851842300045410005B85D /* EfficiencyCalculator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EfficiencyCalculator.swift; sourceTree = "<group>"; };
+		01851843300045560005B85D /* HealthKitManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthKitManager.swift; sourceTree = "<group>"; };
+		01851844300052620005B85D /* DashboardViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardViewModel.swift; sourceTree = "<group>"; };
+		018518453000527C0005B85D /* AnalyticsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsViewModel.swift; sourceTree = "<group>"; };
+		018518463000528B0005B85D /* WelcomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeView.swift; sourceTree = "<group>"; };
+		01851847300052980005B85D /* MainDashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainDashboardView.swift; sourceTree = "<group>"; };
+		01851848300052A70005B85D /* MetricsAnalyticsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetricsAnalyticsView.swift; sourceTree = "<group>"; };
+		01851849300052B30005B85D /* HealthSyncSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthSyncSettingsView.swift; sourceTree = "<group>"; };
+		0185184A300052C00005B85D /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
+		01851859300058300005B85D /* DebugSeeder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebugSeeder.swift; sourceTree = "<group>"; };
+		0185185D30016A960005B85D /* .gitignore */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
 /* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		0185183A300043640005B85D /* Exceptions for "PaceCaster" folder in "PaceCaster" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 01851827300042950005B85D /* PaceCaster */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		0185182A300042950005B85D /* PaceCaster */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				0185183A300043640005B85D /* Exceptions for "PaceCaster" folder in "PaceCaster" target */,
+			);
 			path = PaceCaster;
 			sourceTree = "<group>";
 		};
@@ -32,17 +76,54 @@
 		0185181F300042950005B85D = {
 			isa = PBXGroup;
 			children = (
+				0185183E300044C10005B85D /* Views */,
+				0185183D300044B70005B85D /* ViewModels */,
+				0185183C300044AF0005B85D /* Services */,
+				0185183B300044A50005B85D /* Models */,
 				0185182A300042950005B85D /* PaceCaster */,
-				01851829300042950005B85D /* Products */,
+				0185185D30016A960005B85D /* .gitignore */,
 			);
 			sourceTree = "<group>";
 		};
-		01851829300042950005B85D /* Products */ = {
+		0185183B300044A50005B85D /* Models */ = {
 			isa = PBXGroup;
 			children = (
-				01851828300042950005B85D /* PaceCaster.app */,
+				01851840300045110005B85D /* AppSettings.swift */,
+				0185183F300044F00005B85D /* RunWorkout.swift */,
 			);
-			name = Products;
+			path = Models;
+			sourceTree = "<group>";
+		};
+		0185183C300044AF0005B85D /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				01851859300058300005B85D /* DebugSeeder.swift */,
+				01851843300045560005B85D /* HealthKitManager.swift */,
+				01851842300045410005B85D /* EfficiencyCalculator.swift */,
+				01851841300045290005B85D /* PredictionEngine.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+		0185183D300044B70005B85D /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				018518453000527C0005B85D /* AnalyticsViewModel.swift */,
+				01851844300052620005B85D /* DashboardViewModel.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		0185183E300044C10005B85D /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				0185184A300052C00005B85D /* RootView.swift */,
+				01851849300052B30005B85D /* HealthSyncSettingsView.swift */,
+				01851848300052A70005B85D /* MetricsAnalyticsView.swift */,
+				01851847300052980005B85D /* MainDashboardView.swift */,
+				018518463000528B0005B85D /* WelcomeView.swift */,
+			);
+			path = Views;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -95,7 +176,7 @@
 			mainGroup = 0185181F300042950005B85D;
 			minimizedProjectReferenceProxies = 1;
 			preferredProjectObjectVersion = 77;
-			productRefGroup = 01851829300042950005B85D /* Products */;
+			productRefGroup = 0185181F300042950005B85D;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
@@ -109,6 +190,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0185185E30016A9D0005B85D /* .gitignore in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -119,6 +201,19 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				01851857300054F50005B85D /* HealthSyncSettingsView.swift in Sources */,
+				01851851300054D70005B85D /* HealthKitManager.swift in Sources */,
+				01851852300054DB0005B85D /* DashboardViewModel.swift in Sources */,
+				0185184F300054CF0005B85D /* PredictionEngine.swift in Sources */,
+				01851855300054ED0005B85D /* MainDashboardView.swift in Sources */,
+				01851854300054E90005B85D /* WelcomeView.swift in Sources */,
+				0185185A300058320005B85D /* DebugSeeder.swift in Sources */,
+				01851856300054F10005B85D /* MetricsAnalyticsView.swift in Sources */,
+				0185184E300054CA0005B85D /* AppSettings.swift in Sources */,
+				0185184D300054BE0005B85D /* RunWorkout.swift in Sources */,
+				01851850300054D30005B85D /* EfficiencyCalculator.swift in Sources */,
+				01851853300054DF0005B85D /* AnalyticsViewModel.swift in Sources */,
+				01851858300054F90005B85D /* RootView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -251,16 +346,20 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = PaceCaster/PaceCaster.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = VT4DLY4FM7;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = PaceCaster/Info.plist;
+				INFOPLIST_KEY_NSHealthShareUsageDescription = "PaceCaster reads your running workouts, heart rate, and distance to compute your Aerobic Efficiency and predict race paces.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -283,16 +382,20 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = PaceCaster/PaceCaster.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = VT4DLY4FM7;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = PaceCaster/Info.plist;
+				INFOPLIST_KEY_NSHealthShareUsageDescription = "PaceCaster reads your running workouts, heart rate, and distance to compute your Aerobic Efficiency and predict race paces.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
