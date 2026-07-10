@@ -101,5 +101,22 @@ enum DebugSeeder {
         try? modelContext.delete(model: RunWorkout.self)
         try? modelContext.save()
     }
+    
+    /// Seeds a single run dated today with HR present but insufficient samples,
+    /// specifically to test the red-flagged HR display path.
+    static func seedFlaggedHRRun(into modelContext: ModelContext) {
+        let flaggedRun = RunWorkout(
+            healthKitUUID: UUID(),
+            startDate: Date(),
+            durationSeconds: 28 * 60,
+            distanceMeters: 4800,
+            averageHeartRate: 149,
+            heartRateSampleCount: 6   // below the 10-sample minimum
+        )
+        // Deliberately NOT computing efficiencyFactor — this run should never
+        // qualify as steady-state, so it shouldn't have an EF value at all.
+        modelContext.insert(flaggedRun)
+        try? modelContext.save()
+    }
 }
 #endif

@@ -30,6 +30,20 @@ struct HealthSyncSettingsView: View {
                 }
             }
             
+            #if DEBUG
+            Section("Debug") {
+                Button("Seed Test Data") {
+                    DebugSeeder.seed(into: modelContext)
+                }
+                Button("Seed Flagged HR Run") {
+                    DebugSeeder.seedFlaggedHRRun(into: modelContext)
+                }
+                Button("Clear Test Data", role: .destructive) {
+                    DebugSeeder.clear(modelContext: modelContext)
+                }
+            }
+            #endif
+            
             Section {
                 HStack {
                     Text("Last Synced")
