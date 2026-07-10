@@ -40,12 +40,37 @@ struct MainDashboardView: View {
     }
 
     private var baselineCard: some View {
-        VStack(spacing: 8) {
+        VStack(spacing: 12) {
             if viewModel.isLoading {
                 ProgressView()
             } else if let ef = viewModel.aerobicBaselineEF {
-                Text("Aerobic Baseline").font(.subheadline).foregroundStyle(.secondary)
-                Text(String(format: "%.2f", ef)).font(.system(size: 48, weight: .bold, design: .rounded))
+                VStack(spacing: 4) {
+                    Text("Aerobic Baseline").font(.subheadline).foregroundStyle(.secondary)
+                    Text(String(format: "%.2f", ef)).font(.system(size: 48, weight: .bold, design: .rounded))
+                    if let date = viewModel.latestRunDate {
+                        Text("as of \(date.formatted(.relative(presentation: .named)))")
+                            .font(.caption)
+                            .foregroundStyle(.tertiary)
+                    }
+                }
+
+                Divider()
+
+                HStack(spacing: 20) {
+                    VStack(spacing: 2) {
+                        Text("Distance").font(.caption).foregroundStyle(.secondary)
+                        Text(viewModel.latestRunDistanceDisplay).font(.headline)
+                    }
+                    VStack(spacing: 2) {
+                        Text("Pace").font(.caption).foregroundStyle(.secondary)
+                        Text(viewModel.latestRunPaceDisplay).font(.headline)
+                    }
+                    VStack(spacing: 2) {
+                        Text("Heart Rate").font(.caption).foregroundStyle(.secondary)
+                        Text(viewModel.latestRunHRDisplay).font(.headline)
+                    }
+                }
+                .frame(maxWidth: .infinity)
             } else {
                 Text("Complete a run longer than 20 minutes with heart rate data to see your Aerobic Baseline.")
                     .multilineTextAlignment(.center)

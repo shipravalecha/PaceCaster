@@ -17,6 +17,10 @@ final class DashboardViewModel: ObservableObject {
     @Published var splitPace: String = "--:--"
     @Published var isLoading: Bool = false
     @Published var predictionUnavailableMessage: String?
+    @Published var latestRunDate: Date?
+    @Published var latestRunPaceDisplay: String = "--"
+    @Published var latestRunHRDisplay: String = "--"
+    @Published var latestRunDistanceDisplay: String = "--"
 
     private var modelContext: ModelContext?
     private var allWorkouts: [RunWorkout] = []
@@ -36,7 +40,29 @@ final class DashboardViewModel: ObservableObject {
         isLoading = true
         let descriptor = FetchDescriptor<RunWorkout>(sortBy: [SortDescriptor(\.startDate, order: .reverse)])
         allWorkouts = (try? modelContext.fetch(descriptor)) ?? []
-        aerobicBaselineEF = EfficiencyCalculator.latestBaseline(allWorkouts)?.efficiencyFactor
+        if let latest = EfficiencyCalculator.latestBaseline(allWorkouts) {
+            aerobicBaselineEF = latest.efficiencyFactor
+            latestRunDate = latest.startDate
+            latestRunHRDisplay = latest.averageHeartRate.map { String(format: "%.0f bpm", $0) } ?? "--"
+            if let distance = latest.distanceMeters {
+                latestRunPaceDisplay = PredictionEngine.splitPace(
+                    finishTimeSeconds: latest.durationSeconds,
+                    distanceMeters: distance,
+                    unit: settings.measurementUnit
+                )
+                let unitDistance = settings.measurementUnit == .miles ? distance / 1609.344 : distance / 1000.0
+                latestRunDistanceDisplay = String(format: "%.1f %@", unitDistance, settings.measurementUnit == .miles ? "mi" : "km")
+            } else {
+                latestRunPaceDisplay = "--"
+                latestRunDistanceDisplay = "--"
+            }
+        } else {
+            aerobicBaselineEF = nil
+            latestRunDate = nil
+            latestRunPaceDisplay = "--"
+            latestRunHRDisplay = "--"
+            latestRunDistanceDisplay = "--"
+        }
         recomputeCast()
         isLoading = false
     }
