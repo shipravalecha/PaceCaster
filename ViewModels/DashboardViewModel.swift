@@ -17,12 +17,14 @@ final class DashboardViewModel: ObservableObject {
     @Published var splitPace: String = "--:--"
     @Published var isLoading: Bool = false
     @Published var predictionUnavailableMessage: String?
+    @Published var baselineDate: Date?
     @Published var latestRunDate: Date?
     @Published var latestRunPaceDisplay: String = "--"
     @Published var latestRunHRDisplay: String = "--"
     @Published var latestRunDistanceDisplay: String = "--"
     @Published var castBasisDisplay: String?
     @Published var recentRunNote: String?
+    @Published var latestRunHRIsFlagged: Bool = false
 
     private var modelContext: ModelContext?
     private var allWorkouts: [RunWorkout] = []
@@ -42,16 +44,20 @@ final class DashboardViewModel: ObservableObject {
         isLoading = true
         let descriptor = FetchDescriptor<RunWorkout>(sortBy: [SortDescriptor(\.startDate, order: .reverse)])
         allWorkouts = (try? modelContext.fetch(descriptor)) ?? []
+
+        // Baseline: most recent QUALIFYING run
         let baseline = EfficiencyCalculator.latestBaseline(allWorkouts)
         aerobicBaselineEF = baseline?.efficiencyFactor
-        
-        if let latest = EfficiencyCalculator.latestBaseline(allWorkouts) {
-            aerobicBaselineEF = latest.efficiencyFactor
-            latestRunDate = latest.startDate
-            latestRunHRDisplay = latest.averageHeartRate.map { String(format: "%.0f bpm", $0) } ?? "--"
-            if let distance = latest.distanceMeters {
+        baselineDate = baseline?.startDate
+
+        // Stats row: most recent run OVERALL, regardless of qualification
+        let mostRecent = allWorkouts.first
+        latestRunDate = mostRecent?.startDate
+
+        if let mostRecent {
+            if let distance = mostRecent.distanceMeters {
                 latestRunPaceDisplay = PredictionEngine.splitPace(
-                    finishTimeSeconds: latest.durationSeconds,
+                    finishTimeSeconds: mostRecent.durationSeconds,
                     distanceMeters: distance,
                     unit: settings.measurementUnit
                 )
@@ -61,19 +67,45 @@ final class DashboardViewModel: ObservableObject {
                 latestRunPaceDisplay = "--"
                 latestRunDistanceDisplay = "--"
             }
+            latestRunHRDisplay = mostRecent.averageHeartRate.map { String(format: "%.0f bpm", $0) } ?? "--"
+            if let hr = mostRecent.averageHeartRate {
+                    latestRunHRDisplay = String(format: "%.0f bpm", hr)
+                    latestRunHRIsFlagged = mostRecent.heartRateSampleCount < 10
+            } else {
+                    latestRunHRDisplay = "No data"
+                    latestRunHRIsFlagged = false
+            }
         } else {
-            aerobicBaselineEF = nil
-            latestRunDate = nil
             latestRunPaceDisplay = "--"
-            latestRunHRDisplay = "--"
             latestRunDistanceDisplay = "--"
+            latestRunHRDisplay = "--"
         }
-        
-        updateRecentRunNote(baseline: baseline)
+
+        updateRecentRunNote(baseline: baseline, mostRecent: mostRecent)
         recomputeCast()
         isLoading = false
     }
+    
+    private func updateRecentRunNote(baseline: RunWorkout?, mostRecent: RunWorkout?) {
+        guard let mostRecent else {
+            recentRunNote = nil
+            return
+        }
+        // If the most recent run IS the baseline run, it already qualified — nothing to explain.
+        guard mostRecent.healthKitUUID != baseline?.healthKitUUID else {
+            recentRunNote = nil
+            return
+        }
 
+        if mostRecent.durationSeconds <= 1200 {
+            recentRunNote = "Your last run was under 20 minutes, so it wasn't used to update your baseline."
+        } else if mostRecent.averageHeartRate == nil || mostRecent.heartRateSampleCount < 10 {
+            recentRunNote = "Your last run didn't have enough heart rate data to update your baseline."
+        } else {
+            recentRunNote = nil
+        }
+    }
+    
     func selectTargetDistance(_ distance: TargetDistance) {
         targetDistance = distance
         recomputeCast()

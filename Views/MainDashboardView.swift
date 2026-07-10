@@ -47,37 +47,51 @@ struct MainDashboardView: View {
                 VStack(spacing: 4) {
                     Text("Aerobic Baseline").font(.subheadline).foregroundStyle(.secondary)
                     Text(String(format: "%.2f", ef)).font(.system(size: 48, weight: .bold, design: .rounded))
-                    if let date = viewModel.latestRunDate {
-                        Text("as of \(date.formatted(.relative(presentation: .named)))")
+                    if let date = viewModel.baselineDate {
+                        Text("from run on \(date.formatted(date: .abbreviated, time: .omitted))")
                             .font(.caption)
                             .foregroundStyle(.tertiary)
-                    }
-                    if let note = viewModel.recentRunNote {
-                        Text(note)
-                            .font(.caption)
-                            .foregroundStyle(.orange)
-                            .multilineTextAlignment(.center)
-                            .padding(.top, 2)
                     }
                 }
 
                 Divider()
 
-                HStack(spacing: 20) {
-                    VStack(spacing: 2) {
-                        Text("Distance").font(.caption).foregroundStyle(.secondary)
-                        Text(viewModel.latestRunDistanceDisplay).font(.headline)
+                VStack(spacing: 8) {
+                    Text("Last Run")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                        .textCase(.uppercase)
+
+                    HStack(spacing: 20) {
+                        VStack(spacing: 2) {
+                            Text("Distance").font(.caption).foregroundStyle(.secondary)
+                            Text(viewModel.latestRunDistanceDisplay).font(.headline)
+                        }
+                        VStack(spacing: 2) {
+                            Text("Pace").font(.caption).foregroundStyle(.secondary)
+                            Text(viewModel.latestRunPaceDisplay).font(.headline)
+                        }
+                        VStack(spacing: 2) {
+                            Text("Heart Rate").font(.caption).foregroundStyle(.secondary)
+                                Text(viewModel.latestRunHRDisplay)
+                                    .font(.headline)
+                                    .foregroundStyle(
+                                        viewModel.latestRunHRIsFlagged ? .red :
+                                        (viewModel.latestRunHRDisplay == "No data" ? .secondary : .primary)
+                                    )
+
+                        }
                     }
-                    VStack(spacing: 2) {
-                        Text("Pace").font(.caption).foregroundStyle(.secondary)
-                        Text(viewModel.latestRunPaceDisplay).font(.headline)
-                    }
-                    VStack(spacing: 2) {
-                        Text("Heart Rate").font(.caption).foregroundStyle(.secondary)
-                        Text(viewModel.latestRunHRDisplay).font(.headline)
-                    }
+                    .frame(maxWidth: .infinity)
                 }
-                .frame(maxWidth: .infinity)
+
+                if let note = viewModel.recentRunNote {
+                    Text(note)
+                        .font(.caption)
+                        .foregroundStyle(.orange)
+                        .multilineTextAlignment(.center)
+                        .padding(.top, 2)
+                }
             } else {
                 Text("Complete a run longer than 20 minutes with heart rate data to see your Aerobic Baseline.")
                     .multilineTextAlignment(.center)
