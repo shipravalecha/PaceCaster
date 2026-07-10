@@ -110,6 +110,12 @@ struct MainDashboardView: View {
                     Text("Target Split").font(.subheadline).foregroundStyle(.secondary)
                     Text(viewModel.splitPace).font(.title2.weight(.medium))
                 }
+                if let basis = viewModel.castBasisDisplay {
+                    Text(basis)
+                        .font(.caption)
+                        .foregroundStyle(.tertiary)
+                        .padding(.top, 4)
+                }
             }
         }
         .frame(maxWidth: .infinity)

@@ -21,6 +21,7 @@ final class DashboardViewModel: ObservableObject {
     @Published var latestRunPaceDisplay: String = "--"
     @Published var latestRunHRDisplay: String = "--"
     @Published var latestRunDistanceDisplay: String = "--"
+    @Published var castBasisDisplay: String?
 
     private var modelContext: ModelContext?
     private var allWorkouts: [RunWorkout] = []
@@ -78,9 +79,11 @@ final class DashboardViewModel: ObservableObject {
             predictionUnavailableMessage = "Complete a qualifying steady-state run to generate a prediction."
             predictedFinishTime = "--:--:--"
             splitPace = "--:--"
+            castBasisDisplay = nil
             return
         }
         predictionUnavailableMessage = nil
+        castBasisDisplay = "Based on your best runs from the last 30 days"
 
         guard let cast = PredictionEngine.predict(
             baselineDurationSeconds: baseline.durationSeconds,
