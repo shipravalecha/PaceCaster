@@ -18,22 +18,22 @@ struct BaselineExplainerView: View {
 
                     explainerSection(
                         title: "What it measures",
-                        body: "Your Aerobic Baseline shows how much speed you get for every heartbeat. A higher number means your heart is working less to hold the same pace — a sign of improving aerobic fitness."
+                        body: "Your Aerobic Baseline shows how much speed you get for every heartbeat. A higher number means your heart is working less to hold the same pace - a sign of improving aerobic fitness."
                     )
 
                     explainerSection(
                         title: "Where it comes from",
-                        body: "It's calculated from your most recent qualifying run — one longer than 20 minutes, with a steady heart rate throughout. Shorter runs or runs missing heart rate data aren't used, since they can't produce a reliable reading."
+                        body: "It's calculated from your most recent qualifying run - one longer than 20 minutes, with a steady heart rate throughout. Shorter runs or runs missing heart rate data aren't used, since they can't produce a reliable reading."
                     )
 
                     explainerSection(
                         title: "Why it can seem to \"lag\"",
-                        body: "If your last run didn't qualify, your baseline will still show your most recent good run instead — with a note explaining why. This keeps the number honest rather than computing it from a run that wouldn't give a meaningful reading."
+                        body: "If your last run didn't qualify, your baseline will still show your most recent good run instead - with a note explaining why. This keeps the number honest rather than computing it from a run that wouldn't give a meaningful reading."
                     )
 
                     explainerSection(
                         title: "Rising vs falling",
-                        body: "The arrow next to your baseline compares it to your previous qualifying run. A rising baseline generally means your training is working; a falling one can mean fatigue, heat, or an off day — not necessarily lost fitness."
+                        body: "The arrow next to your baseline compares it to your previous qualifying run. A rising baseline generally means your training is working; a falling one can mean fatigue, heat, or an off day - not necessarily lost fitness."
                     )
                 }
                 .padding()
