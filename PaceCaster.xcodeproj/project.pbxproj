@@ -21,6 +21,7 @@
 		01851858300054F90005B85D /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0185184A300052C00005B85D /* RootView.swift */; };
 		0185185A300058320005B85D /* DebugSeeder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01851859300058300005B85D /* DebugSeeder.swift */; };
 		0185185E30016A9D0005B85D /* .gitignore in Resources */ = {isa = PBXBuildFile; fileRef = 0185185D30016A960005B85D /* .gitignore */; };
+		01851860300802FF0005B85D /* BaselineExplainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0185185F300802FD0005B85D /* BaselineExplainerView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -39,6 +40,7 @@
 		0185184A300052C00005B85D /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
 		01851859300058300005B85D /* DebugSeeder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebugSeeder.swift; sourceTree = "<group>"; };
 		0185185D30016A960005B85D /* .gitignore */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
+		0185185F300802FD0005B85D /* BaselineExplainerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaselineExplainerView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -117,6 +119,7 @@
 		0185183E300044C10005B85D /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				0185185F300802FD0005B85D /* BaselineExplainerView.swift */,
 				0185184A300052C00005B85D /* RootView.swift */,
 				01851849300052B30005B85D /* HealthSyncSettingsView.swift */,
 				01851848300052A70005B85D /* MetricsAnalyticsView.swift */,
@@ -210,6 +213,7 @@
 				0185185A300058320005B85D /* DebugSeeder.swift in Sources */,
 				01851856300054F10005B85D /* MetricsAnalyticsView.swift in Sources */,
 				0185184E300054CA0005B85D /* AppSettings.swift in Sources */,
+				01851860300802FF0005B85D /* BaselineExplainerView.swift in Sources */,
 				0185184D300054BE0005B85D /* RunWorkout.swift in Sources */,
 				01851850300054D30005B85D /* EfficiencyCalculator.swift in Sources */,
 				01851853300054DF0005B85D /* AnalyticsViewModel.swift in Sources */,

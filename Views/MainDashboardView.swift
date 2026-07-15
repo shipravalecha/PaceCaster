@@ -11,6 +11,7 @@ import SwiftData
 struct MainDashboardView: View {
     @Environment(\.modelContext) private var modelContext
     @StateObject private var viewModel = DashboardViewModel()
+    @State private var showBaselineInfo = false
 
     var body: some View {
         NavigationStack {
@@ -21,6 +22,9 @@ struct MainDashboardView: View {
                     outputCard
                 }
                 .padding()
+                .sheet(isPresented: $showBaselineInfo) {
+                    BaselineExplainerView()
+                }
             }
             .navigationTitle("PaceCaster")
             .toolbar {
@@ -45,7 +49,16 @@ struct MainDashboardView: View {
                 ProgressView()
             } else if let ef = viewModel.aerobicBaselineEF {
                 VStack(spacing: 4) {
-                    Text("Aerobic Baseline").font(.subheadline).foregroundStyle(.secondary)
+                    HStack(spacing: 4) {
+                        Text("Aerobic Baseline").font(.subheadline).foregroundStyle(.secondary)
+                        Button {
+                            showBaselineInfo = true
+                        } label: {
+                            Image(systemName: "info.circle")
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                        }
+                    }
                     
                     HStack(spacing: 8) {
                         Text(String(format: "%.2f", ef)).font(.system(size: 48, weight: .bold, design: .rounded))
