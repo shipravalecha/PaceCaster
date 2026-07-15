@@ -19,12 +19,12 @@ struct HealthSyncSettingsView: View {
     var body: some View {
         Form {
             Section("HealthKit Access") {
-                statusRow(title: "Workouts", type: HKObjectType.workoutType())
-                statusRow(title: "Heart Rate", type: HKObjectType.quantityType(forIdentifier: .heartRate)!)
-                statusRow(title: "Running Distance", type: HKObjectType.quantityType(forIdentifier: .distanceWalkingRunning)!)
+                Text("PaceCaster reads Workouts, Heart Rate, and Running Distance. iOS doesn't let apps check exact read-permission status — you can review or change exactly what's shared in the Health app.")
+                    .font(.footnote)
+                    .foregroundStyle(.secondary)
 
-                Button("Open Health Settings") {
-                    if let url = URL(string: UIApplication.openSettingsURLString) {
+                Button("Open Health App") {
+                    if let url = URL(string: "x-apple-health://") {
                         UIApplication.shared.open(url)
                     }
                 }
@@ -107,16 +107,6 @@ struct HealthSyncSettingsView: View {
     private var lastSyncedDisplay: String {
         guard let date = settings.lastSyncedAt else { return "Never" }
         return date.formatted(.relative(presentation: .named))
-    }
-
-    private func statusRow(title: String, type: HKObjectType) -> some View {
-        let status = healthKitManager.authorizationStatus(for: type)
-        return HStack {
-            Text(title)
-            Spacer()
-            Text(status == .sharingAuthorized ? "Authorized" : "Not Authorized")
-                .foregroundStyle(status == .sharingAuthorized ? .green : .red)
-        }
     }
 
     private func flushDatabase() {
