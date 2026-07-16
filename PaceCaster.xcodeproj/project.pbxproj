@@ -22,6 +22,7 @@
 		0185185A300058320005B85D /* DebugSeeder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01851859300058300005B85D /* DebugSeeder.swift */; };
 		0185185E30016A9D0005B85D /* .gitignore in Resources */ = {isa = PBXBuildFile; fileRef = 0185185D30016A960005B85D /* .gitignore */; };
 		01851860300802FF0005B85D /* BaselineExplainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0185185F300802FD0005B85D /* BaselineExplainerView.swift */; };
+		01851862300853EE0005B85D /* RunScoreCalculator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01851861300853EC0005B85D /* RunScoreCalculator.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -41,6 +42,7 @@
 		01851859300058300005B85D /* DebugSeeder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebugSeeder.swift; sourceTree = "<group>"; };
 		0185185D30016A960005B85D /* .gitignore */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
 		0185185F300802FD0005B85D /* BaselineExplainerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaselineExplainerView.swift; sourceTree = "<group>"; };
+		01851861300853EC0005B85D /* RunScoreCalculator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RunScoreCalculator.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -99,6 +101,7 @@
 		0185183C300044AF0005B85D /* Services */ = {
 			isa = PBXGroup;
 			children = (
+				01851861300853EC0005B85D /* RunScoreCalculator.swift */,
 				01851859300058300005B85D /* DebugSeeder.swift */,
 				01851843300045560005B85D /* HealthKitManager.swift */,
 				01851842300045410005B85D /* EfficiencyCalculator.swift */,
@@ -217,6 +220,7 @@
 				0185184D300054BE0005B85D /* RunWorkout.swift in Sources */,
 				01851850300054D30005B85D /* EfficiencyCalculator.swift in Sources */,
 				01851853300054DF0005B85D /* AnalyticsViewModel.swift in Sources */,
+				01851862300853EE0005B85D /* RunScoreCalculator.swift in Sources */,
 				01851858300054F90005B85D /* RootView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -18,6 +18,7 @@ struct MainDashboardView: View {
             ScrollView {
                 VStack(spacing: 28) {
                     baselineCard
+                    runScoreCard
                     castSlider
                     outputCard
                 }
@@ -121,6 +122,62 @@ struct MainDashboardView: View {
         .frame(maxWidth: .infinity)
         .padding()
         .background(.thinMaterial, in: RoundedRectangle(cornerRadius: 16))
+    }
+    
+    private var runScoreCard: some View {
+        VStack(spacing: 16) {
+            if let score = viewModel.runScore, let label = viewModel.runScoreLabel {
+                HStack {
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text("Run Score").font(.subheadline).foregroundStyle(.secondary)
+                        Text(label).font(.title2.weight(.bold))
+                    }
+                    Spacer()
+                    ZStack {
+                        Circle().stroke(Color.secondary.opacity(0.2), lineWidth: 8)
+                        Circle()
+                            .trim(from: 0, to: CGFloat(score) / 100)
+                            .stroke(scoreColor(score), style: StrokeStyle(lineWidth: 8, lineCap: .round))
+                            .rotationEffect(.degrees(-90))
+                        Text("\(score)").font(.title3.weight(.bold))
+                    }
+                    .frame(width: 64, height: 64)
+                }
+
+                Divider()
+
+                VStack(spacing: 10) {
+                    factorRow(title: "Aerobic Time", points: viewModel.aerobicTimePoints ?? 0, outOf: 50, color: .green)
+                    factorRow(title: "Pacing Control", points: viewModel.pacingControlPoints ?? 0, outOf: 30, color: .blue)
+                    factorRow(title: "Effort Spikes", points: viewModel.effortSpikePoints ?? 0, outOf: 20, color: .orange)
+                }
+            } else {
+                Text("Run Score needs more heart rate data from your last run to calculate.")
+                    .multilineTextAlignment(.center)
+                    .foregroundStyle(.secondary)
+            }
+        }
+        .frame(maxWidth: .infinity)
+        .padding()
+        .background(.thinMaterial, in: RoundedRectangle(cornerRadius: 16))
+    }
+
+    private func factorRow(title: String, points: Int, outOf: Int, color: Color) -> some View {
+        HStack {
+            Circle().fill(color).frame(width: 8, height: 8)
+            Text(title).font(.subheadline)
+            Spacer()
+            Text("\(points)/\(outOf)").font(.subheadline.weight(.medium)).foregroundStyle(.secondary)
+        }
+    }
+
+    private func scoreColor(_ score: Int) -> Color {
+        switch score {
+        case 90...: return .green
+        case 70..<90: return .blue
+        case 50..<70: return .orange
+        default: return .red
+        }
     }
 
     private var castSlider: some View {

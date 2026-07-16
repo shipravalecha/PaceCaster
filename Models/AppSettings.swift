@@ -30,11 +30,20 @@ final class AppSettings: ObservableObject {
             }
         }
     }
+    
+    @Published var maxHeartRate: Int {
+        didSet { UserDefaults.standard.set(maxHeartRate, forKey: Keys.maxHR) }
+    }
+    @Published var maxHRIsEstimated: Bool {
+        didSet { UserDefaults.standard.set(maxHRIsEstimated, forKey: Keys.maxHRIsEstimated) }
+    }
 
     private enum Keys {
         static let unit = "measurementUnit"
         static let onboarded = "hasCompletedOnboarding"
         static let lastSynced = "lastSyncedAt"
+        static let maxHR = "maxHeartRate"
+        static let maxHRIsEstimated = "maxHRIsEstimated"
     }
 
     private init() {
@@ -48,5 +57,17 @@ final class AppSettings: ObservableObject {
         }
         hasCompletedOnboarding = UserDefaults.standard.bool(forKey: Keys.onboarded)
         lastSyncedAt = UserDefaults.standard.object(forKey: Keys.lastSynced) as? Date
+        
+        if UserDefaults.standard.object(forKey: Keys.maxHR) != nil {
+            maxHeartRate = UserDefaults.standard.integer(forKey: Keys.maxHR)
+            maxHRIsEstimated = UserDefaults.standard.bool(forKey: Keys.maxHRIsEstimated)
+        } else {
+            maxHeartRate = AppSettings.estimatedMaxHR(age: 35) // generic fallback until the user sets a real value
+            maxHRIsEstimated = true
+        }
+    }
+    
+    static func estimatedMaxHR(age: Int) -> Int {
+        Int((208 - 0.7 * Double(age)).rounded()) // Tanaka formula
     }
 }

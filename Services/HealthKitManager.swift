@@ -81,7 +81,9 @@ final class HealthKitManager: ObservableObject {
         }
 
         let distanceMeters = workout.totalDistance?.doubleValue(for: .meter())
-        let (avgHR, hrCount) = try await averageHeartRate(for: workout)
+        let hrSamples = try await heartRateSamples(for: workout)
+        let distSamples = (try? await distanceSamples(for: workout)) ?? []
+        let avgHR: Double? = hrSamples.isEmpty ? nil : hrSamples.reduce(0) { $0 + $1.bpm } / Double(hrSamples.count)
 
         let run = RunWorkout(
             healthKitUUID: workout.uuid,
@@ -89,31 +91,54 @@ final class HealthKitManager: ObservableObject {
             durationSeconds: workout.duration,
             distanceMeters: distanceMeters,
             averageHeartRate: avgHR,
-            heartRateSampleCount: hrCount
+            heartRateSampleCount: hrSamples.count
         )
 
         if run.isSteadyState, let speed = run.averageSpeedMetersPerSecond, let hr = avgHR {
             run.efficiencyFactor = EfficiencyCalculator.computeEF(averageSpeedMetersPerSecond: speed, averageHeartRateBPM: hr)
         }
+
+        let maxHR = await MainActor.run { AppSettings.shared.maxHeartRate }
+        if let result = RunScoreCalculator.compute(heartRateSamples: hrSamples, distanceSamples: distSamples, maxHeartRate: maxHR) {
+            run.runScore = result.totalScore
+            run.aerobicTimePoints = result.aerobicTimePoints
+            run.pacingControlPoints = result.pacingControlPoints
+            run.effortSpikePoints = result.effortSpikePoints
+            run.aerobicPercent = result.aerobicPercent
+            run.effortSpikeCount = result.spikeCount
+        }
+
         return run
     }
-
-    private func averageHeartRate(for workout: HKWorkout) async throws -> (Double?, Int) {
+    
+    private func heartRateSamples(for workout: HKWorkout) async throws -> [(date: Date, bpm: Double)] {
         try await withCheckedThrowingContinuation { continuation in
             let predicate = HKQuery.predicateForSamples(withStart: workout.startDate, end: workout.endDate, options: .strictStartDate)
-            let query = HKSampleQuery(sampleType: heartRateType, predicate: predicate, limit: HKObjectQueryNoLimit, sortDescriptors: nil) { _, samples, error in
+            let query = HKSampleQuery(sampleType: heartRateType, predicate: predicate, limit: HKObjectQueryNoLimit,
+                                       sortDescriptors: [NSSortDescriptor(key: HKSampleSortIdentifierStartDate, ascending: true)]) { _, samples, error in
                 if let error {
                     continuation.resume(throwing: error)
                     return
                 }
                 let hrSamples = (samples as? [HKQuantitySample]) ?? []
-                guard !hrSamples.isEmpty else {
-                    continuation.resume(returning: (nil, 0))
+                let unit = HKUnit.count().unitDivided(by: .minute())
+                continuation.resume(returning: hrSamples.map { (date: $0.startDate, bpm: $0.quantity.doubleValue(for: unit)) })
+            }
+            healthStore.execute(query)
+        }
+    }
+
+    private func distanceSamples(for workout: HKWorkout) async throws -> [(date: Date, meters: Double)] {
+        try await withCheckedThrowingContinuation { continuation in
+            let predicate = HKQuery.predicateForSamples(withStart: workout.startDate, end: workout.endDate, options: .strictStartDate)
+            let query = HKSampleQuery(sampleType: distanceType, predicate: predicate, limit: HKObjectQueryNoLimit,
+                                       sortDescriptors: [NSSortDescriptor(key: HKSampleSortIdentifierStartDate, ascending: true)]) { _, samples, error in
+                if let error {
+                    continuation.resume(throwing: error)
                     return
                 }
-                let unit = HKUnit.count().unitDivided(by: .minute())
-                let total = hrSamples.reduce(0.0) { $0 + $1.quantity.doubleValue(for: unit) }
-                continuation.resume(returning: (total / Double(hrSamples.count), hrSamples.count))
+                let distSamples = (samples as? [HKQuantitySample]) ?? []
+                continuation.resume(returning: distSamples.map { (date: $0.startDate, meters: $0.quantity.doubleValue(for: .meter())) })
             }
             healthStore.execute(query)
         }

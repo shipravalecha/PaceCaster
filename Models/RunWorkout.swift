@@ -17,6 +17,13 @@ final class RunWorkout {
     var averageHeartRate: Double?
     var heartRateSampleCount: Int
     var efficiencyFactor: Double?
+    
+    var runScore: Int?
+    var aerobicTimePoints: Int?
+    var pacingControlPoints: Int?
+    var effortSpikePoints: Int?
+    var aerobicPercent: Double?
+    var effortSpikeCount: Int?
 
     init(healthKitUUID: UUID,
          startDate: Date,

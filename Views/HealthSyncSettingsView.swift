@@ -15,6 +15,8 @@ struct HealthSyncSettingsView: View {
     @Environment(\.modelContext) private var modelContext
     @State private var showFlushConfirmation = false
     @State private var flushError: String?
+    @State private var showAgePrompt = false
+    @State private var ageInput = ""
 
     var body: some View {
         Form {
@@ -29,20 +31,6 @@ struct HealthSyncSettingsView: View {
                     }
                 }
             }
-            
-            #if DEBUG
-            Section("Debug") {
-                Button("Seed Test Data") {
-                    DebugSeeder.seed(into: modelContext)
-                }
-                Button("Seed Flagged HR Run") {
-                    DebugSeeder.seedFlaggedHRRun(into: modelContext)
-                }
-                Button("Clear Test Data", role: .destructive) {
-                    DebugSeeder.clear(modelContext: modelContext)
-                }
-            }
-            #endif
             
             Section {
                 HStack {
@@ -74,6 +62,32 @@ struct HealthSyncSettingsView: View {
                     }
                 }
             }
+            
+            Section {
+                HStack {
+                    Text("Max Heart Rate")
+                    Spacer()
+                    TextField("bpm", value: $settings.maxHeartRate, format: .number)
+                        .keyboardType(.numberPad)
+                        .multilineTextAlignment(.trailing)
+                        .frame(width: 70)
+                        .onChange(of: settings.maxHeartRate) { _, _ in
+                            settings.maxHRIsEstimated = false
+                        }
+                }
+                Button("Estimate from age") {
+                    showAgePrompt = true
+                }
+                if settings.maxHRIsEstimated {
+                    Text("Using a generic estimate. Enter your age or your real max heart rate for a more accurate Run Score.")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+            } header: {
+                Text("Run Score")
+            } footer: {
+                Text("Used to determine your aerobic and anaerobic zones during a run.")
+            }
 
             Section {
                 Button("Delete All Local Data", role: .destructive) {
@@ -86,6 +100,9 @@ struct HealthSyncSettingsView: View {
             Section("Debug") {
                 Button("Seed Test Data") {
                     DebugSeeder.seed(into: modelContext)
+                }
+                Button("Seed Flagged HR Run") {
+                    DebugSeeder.seedFlaggedHRRun(into: modelContext)
                 }
                 Button("Clear Test Data", role: .destructive) {
                     DebugSeeder.clear(modelContext: modelContext)
@@ -102,6 +119,18 @@ struct HealthSyncSettingsView: View {
             Button("OK", role: .cancel) {}
         } message: {
             Text(flushError ?? "")
+        }
+        .alert("Estimate Max Heart Rate", isPresented: $showAgePrompt) {
+            TextField("Age", text: $ageInput).keyboardType(.numberPad)
+            Button("Calculate") {
+                if let age = Int(ageInput), age > 0 {
+                    settings.maxHeartRate = AppSettings.estimatedMaxHR(age: age)
+                    settings.maxHRIsEstimated = true
+                }
+            }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text("We'll estimate your max heart rate using your age.")
         }
     }
     private var lastSyncedDisplay: String {

@@ -25,6 +25,11 @@ final class DashboardViewModel: ObservableObject {
     @Published var castBasisDisplay: String?
     @Published var recentRunNote: String?
     @Published var latestRunHRIsFlagged: Bool = false
+    @Published var runScore: Int?
+    @Published var runScoreLabel: String?
+    @Published var aerobicTimePoints: Int?
+    @Published var pacingControlPoints: Int?
+    @Published var effortSpikePoints: Int?
     enum EFTrendDirection {
         case up, down, flat
     }
@@ -101,6 +106,20 @@ final class DashboardViewModel: ObservableObject {
             latestRunPaceDisplay = "--"
             latestRunDistanceDisplay = "--"
             latestRunHRDisplay = "--"
+        }
+        
+        if let mostRecent, let score = mostRecent.runScore {
+            runScore = score
+            runScoreLabel = RunScoreLabel.forScore(score).rawValue
+            aerobicTimePoints = mostRecent.aerobicTimePoints
+            pacingControlPoints = mostRecent.pacingControlPoints
+            effortSpikePoints = mostRecent.effortSpikePoints
+        } else {
+            runScore = nil
+            runScoreLabel = nil
+            aerobicTimePoints = nil
+            pacingControlPoints = nil
+            effortSpikePoints = nil
         }
 
         updateRecentRunNote(baseline: baseline, mostRecent: mostRecent)
