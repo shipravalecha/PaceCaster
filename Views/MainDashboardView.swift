@@ -149,7 +149,7 @@ struct MainDashboardView: View {
                 VStack(spacing: 10) {
                     factorRow(title: "Aerobic Time", points: viewModel.aerobicTimePoints ?? 0, outOf: 50, color: .green)
                     factorRow(title: "Pacing Control", points: viewModel.pacingControlPoints ?? 0, outOf: 30, color: .blue)
-                    factorRow(title: "Effort Spikes", points: viewModel.effortSpikePoints ?? 0, outOf: 20, color: .orange)
+                    factorRow(title: "Effort Control", points: viewModel.effortSpikePoints ?? 0, outOf: 20, color: .orange, subtitle: spikeSubtitle)
                 }
             } else {
                 Text("Run Score needs more heart rate data from your last run to calculate.")
@@ -161,13 +161,27 @@ struct MainDashboardView: View {
         .padding()
         .background(.thinMaterial, in: RoundedRectangle(cornerRadius: 16))
     }
+    
+    private var spikeSubtitle: String {
+        guard let count = viewModel.effortSpikeCount else { return "" }
+        if count == 0 { return "No anaerobic spikes" }
+        return count == 1 ? "1 anaerobic spike detected" : "\(count) anaerobic spikes detected"
+    }
 
-    private func factorRow(title: String, points: Int, outOf: Int, color: Color) -> some View {
-        HStack {
-            Circle().fill(color).frame(width: 8, height: 8)
-            Text(title).font(.subheadline)
-            Spacer()
-            Text("\(points)/\(outOf)").font(.subheadline.weight(.medium)).foregroundStyle(.secondary)
+    private func factorRow(title: String, points: Int, outOf: Int, color: Color, subtitle: String? = nil) -> some View {
+        VStack(alignment: .leading, spacing: 2) {
+            HStack {
+                Circle().fill(color).frame(width: 8, height: 8)
+                Text(title).font(.subheadline)
+                Spacer()
+                Text("\(points)/\(outOf)").font(.subheadline.weight(.medium)).foregroundStyle(.secondary)
+            }
+            if let subtitle {
+                Text(subtitle)
+                    .font(.caption2)
+                    .foregroundStyle(.tertiary)
+                    .padding(.leading, 16)
+            }
         }
     }
 

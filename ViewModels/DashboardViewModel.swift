@@ -30,6 +30,8 @@ final class DashboardViewModel: ObservableObject {
     @Published var aerobicTimePoints: Int?
     @Published var pacingControlPoints: Int?
     @Published var effortSpikePoints: Int?
+    @Published var effortSpikeCount: Int?
+    
     enum EFTrendDirection {
         case up, down, flat
     }
@@ -114,6 +116,7 @@ final class DashboardViewModel: ObservableObject {
             aerobicTimePoints = mostRecent.aerobicTimePoints
             pacingControlPoints = mostRecent.pacingControlPoints
             effortSpikePoints = mostRecent.effortSpikePoints
+            effortSpikeCount = mostRecent.effortSpikeCount
         } else {
             runScore = nil
             runScoreLabel = nil
