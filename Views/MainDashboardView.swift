@@ -10,7 +10,6 @@ import SwiftData
 
 struct MainDashboardView: View {
     @Environment(\.modelContext) private var modelContext
-    @EnvironmentObject private var settings: AppSettings
     @StateObject private var viewModel = DashboardViewModel()
     @State private var showBaselineInfo = false
 
@@ -129,7 +128,7 @@ struct MainDashboardView: View {
         Group {
             if viewModel.runScore != nil {
                 NavigationLink {
-                    RunScoreDetailView(scoredRuns: viewModel.scoredRuns, maxHRIsEstimated: settings.maxHRIsEstimated)
+                    RunScoreDetailView(scoredRuns: viewModel.scoredRuns)
                 } label: {
                     runScoreCard
                 }

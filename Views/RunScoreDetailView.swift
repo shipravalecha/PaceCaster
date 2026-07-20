@@ -9,7 +9,7 @@ import SwiftUI
 
 struct RunScoreDetailView: View {
     let scoredRuns: [RunWorkout]
-    let maxHRIsEstimated: Bool
+    @EnvironmentObject private var settings: AppSettings
 
     @State private var selectedRun: RunWorkout?
     @Environment(\.dismiss) private var dismiss
@@ -26,7 +26,7 @@ struct RunScoreDetailView: View {
                     factorBreakdown(for: run)
                 }
 
-                if maxHRIsEstimated {
+                if settings.maxHRIsEstimated {
                     maxHRNudge
                 }
 

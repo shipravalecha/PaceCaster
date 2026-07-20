@@ -17,6 +17,7 @@ struct HealthSyncSettingsView: View {
     @State private var flushError: String?
     @State private var showAgePrompt = false
     @State private var ageInput = ""
+    @FocusState private var maxHRFieldFocused: Bool
 
     var body: some View {
         Form {
@@ -71,10 +72,33 @@ struct HealthSyncSettingsView: View {
                         .keyboardType(.numberPad)
                         .multilineTextAlignment(.trailing)
                         .frame(width: 70)
-                        .onChange(of: settings.maxHeartRate) { _, _ in
-                            settings.maxHRIsEstimated = false
+                        .focused($maxHRFieldFocused)
+                        .toolbar {
+                            ToolbarItemGroup(placement: .keyboard) {
+                                Spacer()
+                                Button("Done") {
+                                    maxHRFieldFocused = false
+                                }
+                            }
                         }
+                    Text("bpm")
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
                 }
+                .contentShape(Rectangle())
+                .onTapGesture {
+                    maxHRFieldFocused = true
+                }
+                .onChange(of: settings.maxHeartRate) { _, _ in
+                    // Only treat this as a manual edit if the field is actively focused —
+                    // this excludes programmatic changes like the "Estimate from age" button,
+                    // and commits the instant the user types, regardless of how they later
+                    // leave the screen (Done, back button, swipe, tap elsewhere).
+                    if maxHRFieldFocused {
+                        settings.maxHRIsEstimated = false
+                    }
+                }
+
                 Button("Estimate from age") {
                     showAgePrompt = true
                 }
@@ -88,7 +112,7 @@ struct HealthSyncSettingsView: View {
             } footer: {
                 Text("Used to determine your aerobic and anaerobic zones during a run.")
             }
-
+            
             Section {
                 Button("Delete All Local Data", role: .destructive) {
                     showFlushConfirmation = true
@@ -109,6 +133,14 @@ struct HealthSyncSettingsView: View {
                 }
             }
             #endif
+        }
+        .scrollDismissesKeyboard(.immediately)   // ← tapping/scrolling anywhere dismisses the keyboard
+        .onDisappear {
+            // Guaranteed fallback: commits "manually confirmed" the moment this
+            // screen is left, regardless of how — back button, swipe, or tab switch.
+            if maxHRFieldFocused {
+                settings.maxHRIsEstimated = false
+            }
         }
         .navigationTitle("Settings")
         .confirmationDialog("Delete all running data?", isPresented: $showFlushConfirmation, titleVisibility: .visible) {
@@ -133,6 +165,7 @@ struct HealthSyncSettingsView: View {
             Text("We'll estimate your max heart rate using your age.")
         }
     }
+    
     private var lastSyncedDisplay: String {
         guard let date = settings.lastSyncedAt else { return "Never" }
         return date.formatted(.relative(presentation: .named))
