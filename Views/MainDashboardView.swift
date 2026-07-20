@@ -10,6 +10,7 @@ import SwiftData
 
 struct MainDashboardView: View {
     @Environment(\.modelContext) private var modelContext
+    @EnvironmentObject private var settings: AppSettings
     @StateObject private var viewModel = DashboardViewModel()
     @State private var showBaselineInfo = false
 
@@ -18,7 +19,7 @@ struct MainDashboardView: View {
             ScrollView {
                 VStack(spacing: 28) {
                     baselineCard
-                    runScoreCard
+                    runScoreSection
                     castSlider
                     outputCard
                 }
@@ -124,6 +125,21 @@ struct MainDashboardView: View {
         .background(.thinMaterial, in: RoundedRectangle(cornerRadius: 16))
     }
     
+    private var runScoreSection: some View {
+        Group {
+            if viewModel.runScore != nil {
+                NavigationLink {
+                    RunScoreDetailView(scoredRuns: viewModel.scoredRuns, maxHRIsEstimated: settings.maxHRIsEstimated)
+                } label: {
+                    runScoreCard
+                }
+                .buttonStyle(.plain)
+            } else {
+                runScoreCard
+            }
+        }
+    }
+    
     private var runScoreCard: some View {
         VStack(spacing: 16) {
             if let score = viewModel.runScore, let label = viewModel.runScoreLabel {
@@ -142,6 +158,10 @@ struct MainDashboardView: View {
                         Text("\(score)").font(.title3.weight(.bold))
                     }
                     .frame(width: 64, height: 64)
+                    
+                    Image(systemName: "chevron.right.circle.fill")
+                        .font(.title3)
+                        .foregroundStyle(.secondary)
                 }
 
                 Divider()
@@ -149,7 +169,7 @@ struct MainDashboardView: View {
                 VStack(spacing: 10) {
                     factorRow(title: "Aerobic Time", points: viewModel.aerobicTimePoints ?? 0, outOf: 50, color: .green)
                     factorRow(title: "Pacing Control", points: viewModel.pacingControlPoints ?? 0, outOf: 30, color: .blue)
-                    factorRow(title: "Effort Control", points: viewModel.effortSpikePoints ?? 0, outOf: 20, color: .orange, subtitle: spikeSubtitle)
+                    factorRow(title: "Effort Spikes", points: viewModel.effortSpikePoints ?? 0, outOf: 20, color: .orange)
                 }
             } else {
                 Text("Run Score needs more heart rate data from your last run to calculate.")
@@ -168,23 +188,14 @@ struct MainDashboardView: View {
         return count == 1 ? "1 anaerobic spike detected" : "\(count) anaerobic spikes detected"
     }
 
-    private func factorRow(title: String, points: Int, outOf: Int, color: Color, subtitle: String? = nil) -> some View {
-        VStack(alignment: .leading, spacing: 2) {
-            HStack {
-                Circle().fill(color).frame(width: 8, height: 8)
-                Text(title).font(.subheadline)
-                Spacer()
-                Text("\(points)/\(outOf)").font(.subheadline.weight(.medium)).foregroundStyle(.secondary)
-            }
-            if let subtitle {
-                Text(subtitle)
-                    .font(.caption2)
-                    .foregroundStyle(.tertiary)
-                    .padding(.leading, 16)
-            }
+    private func factorRow(title: String, points: Int, outOf: Int, color: Color) -> some View {
+        HStack {
+            Circle().fill(color).frame(width: 8, height: 8)
+            Text(title).font(.subheadline)
+            Spacer()
+            Text("\(points)/\(outOf)").font(.subheadline.weight(.medium)).foregroundStyle(.secondary)
         }
     }
-
     private func scoreColor(_ score: Int) -> Color {
         switch score {
         case 90...: return .green

@@ -31,6 +31,7 @@ final class DashboardViewModel: ObservableObject {
     @Published var pacingControlPoints: Int?
     @Published var effortSpikePoints: Int?
     @Published var effortSpikeCount: Int?
+    @Published var scoredRuns: [RunWorkout] = []
     
     enum EFTrendDirection {
         case up, down, flat
@@ -57,6 +58,7 @@ final class DashboardViewModel: ObservableObject {
         isLoading = true
         let descriptor = FetchDescriptor<RunWorkout>(sortBy: [SortDescriptor(\.startDate, order: .reverse)])
         allWorkouts = (try? modelContext.fetch(descriptor)) ?? []
+        scoredRuns = allWorkouts.filter { $0.runScore != nil }.sorted { $0.startDate > $1.startDate }
 
         // Baseline: most recent QUALIFYING run
         let baseline = EfficiencyCalculator.latestBaseline(allWorkouts)
