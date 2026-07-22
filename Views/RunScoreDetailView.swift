@@ -10,33 +10,55 @@ import SwiftUI
 struct RunScoreDetailView: View {
     let scoredRuns: [RunWorkout]
     @EnvironmentObject private var settings: AppSettings
+    @State private var selectedIndex: Int = 0
 
-    @State private var selectedRun: RunWorkout?
     @Environment(\.dismiss) private var dismiss
-
+    
     private var displayedRun: RunWorkout? {
-        selectedRun ?? scoredRuns.first
+        guard scoredRuns.indices.contains(selectedIndex) else { return nil }
+        return scoredRuns[selectedIndex]
+    }
+    
+    private var canGoOlder: Bool { selectedIndex < scoredRuns.count - 1 }
+    private var canGoNewer: Bool { selectedIndex > 0 }
+
+    private func goOlder() {
+        guard canGoOlder else { return }
+        selectedIndex += 1
+    }
+
+    private func goNewer() {
+        guard canGoNewer else { return }
+        selectedIndex -= 1
     }
 
     var body: some View {
-        ScrollView {
-            VStack(spacing: 28) {
-                if let run = displayedRun {
-                    scoreHeader(for: run)
-                    factorBreakdown(for: run)
+        ScrollViewReader { proxy in
+            ScrollView {
+                VStack(spacing: 28) {
+                    if let run = displayedRun {
+                        scoreHeader(for: run)
+                            .id("top")   // ← anchor point to scroll to
+                        factorBreakdown(for: run)
+                    }
+
+                    if settings.maxHRIsEstimated {
+                        maxHRNudge
+                    }
+
+                    howItWorksSection
+
+                    if scoredRuns.count > 1 {
+                        historySection
+                    }
                 }
-
-                if settings.maxHRIsEstimated {
-                    maxHRNudge
-                }
-
-                howItWorksSection
-
-                if scoredRuns.count > 1 {
-                    historySection
+                .padding()
+            }
+            .onChange(of: selectedIndex) { _, _ in
+                withAnimation {
+                    proxy.scrollTo("top", anchor: .top)
                 }
             }
-            .padding()
         }
         .navigationTitle("Run Score")
         .navigationBarTitleDisplayMode(.inline)
@@ -45,25 +67,61 @@ struct RunScoreDetailView: View {
     // MARK: - Header
 
     private func scoreHeader(for run: RunWorkout) -> some View {
-        VStack(spacing: 8) {
-            ZStack {
-                Circle().stroke(Color.secondary.opacity(0.2), lineWidth: 10)
-                Circle()
-                    .trim(from: 0, to: CGFloat(run.runScore ?? 0) / 100)
-                    .stroke(scoreColor(run.runScore ?? 0), style: StrokeStyle(lineWidth: 10, lineCap: .round))
-                    .rotationEffect(.degrees(-90))
-                VStack(spacing: 2) {
-                    Text("\(run.runScore ?? 0)").font(.system(size: 32, weight: .bold, design: .rounded))
-                    Text(RunScoreLabel.forScore(run.runScore ?? 0).rawValue)
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                }
+        HStack(spacing: 20) {
+            Button {
+                goOlder()
+            } label: {
+                Image(systemName: "chevron.left.circle.fill")
+                    .font(.title)
+                    .foregroundStyle(canGoOlder ? .secondary : Color.secondary.opacity(0.25))
             }
-            .frame(width: 120, height: 120)
+            .disabled(!canGoOlder)
 
-            Text(run.startDate.formatted(date: .abbreviated, time: .omitted))
-                .font(.subheadline)
-                .foregroundStyle(.secondary)
+            VStack(spacing: 8) {
+                ZStack {
+                    Circle().stroke(Color.secondary.opacity(0.2), lineWidth: 10)
+                    Circle()
+                        .trim(from: 0, to: CGFloat(run.runScore ?? 0) / 100)
+                        .stroke(scoreColor(run.runScore ?? 0), style: StrokeStyle(lineWidth: 10, lineCap: .round))
+                        .rotationEffect(.degrees(-90))
+                    VStack(spacing: 2) {
+                        Text("\(run.runScore ?? 0)").font(.system(size: 32, weight: .bold, design: .rounded))
+                        Text(RunScoreLabel.forScore(run.runScore ?? 0).rawValue)
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
+                }
+                .frame(width: 120, height: 120)
+                .contentShape(Circle())
+                .gesture(
+                    DragGesture(minimumDistance: 20, coordinateSpace: .local)
+                        .onEnded { value in
+                            let horizontal = value.translation.width
+                            let vertical = value.translation.height
+                            // Only treat as a swipe if it's clearly more horizontal than vertical —
+                            // this keeps it from fighting the ScrollView's vertical scroll gesture.
+                            guard abs(horizontal) > abs(vertical) * 1.5 else { return }
+                            if horizontal < 0 {
+                                goOlder()
+                            } else {
+                                goNewer()
+                            }
+                        }
+                )
+
+                Text(run.startDate.formatted(date: .abbreviated, time: .omitted))
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+            }
+
+            Button {
+                goNewer()
+            } label: {
+                Image(systemName: "chevron.right.circle.fill")
+                    .font(.title)
+                    .foregroundStyle(canGoNewer ? .secondary : Color.secondary.opacity(0.25))
+            }
+            .disabled(!canGoNewer)
         }
         .frame(maxWidth: .infinity)
     }
@@ -189,7 +247,9 @@ struct RunScoreDetailView: View {
             VStack(spacing: 0) {
                 ForEach(scoredRuns) { run in
                     Button {
-                        selectedRun = run
+                        if let index = scoredRuns.firstIndex(where: { $0.healthKitUUID == run.healthKitUUID }) {
+                            selectedIndex = index
+                        }
                     } label: {
                         historyRow(for: run)
                     }
@@ -221,7 +281,7 @@ struct RunScoreDetailView: View {
                 .foregroundStyle(scoreColor(run.runScore ?? 0))
         }
         .padding()
-        .background(run.id == displayedRun?.id ? Color.secondary.opacity(0.08) : Color.clear)
+        .background(run.healthKitUUID == displayedRun?.healthKitUUID ? Color.secondary.opacity(0.08) : Color.clear)
         .contentShape(Rectangle())   // ← makes the entire row (including empty space) tappable
     }
 
