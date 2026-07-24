@@ -24,6 +24,8 @@
 		01851860300802FF0005B85D /* BaselineExplainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0185185F300802FD0005B85D /* BaselineExplainerView.swift */; };
 		01851862300853EE0005B85D /* RunScoreCalculator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01851861300853EC0005B85D /* RunScoreCalculator.swift */; };
 		01851864300EA34E0005B85D /* RunScoreDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01851863300EA34C0005B85D /* RunScoreDetailView.swift */; };
+		0185186630116FE50005B85D /* NotificationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0185186530116FE40005B85D /* NotificationManager.swift */; };
+		018518683011702F0005B85D /* WeeklyRecapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 018518673011702D0005B85D /* WeeklyRecapView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -45,6 +47,8 @@
 		0185185F300802FD0005B85D /* BaselineExplainerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaselineExplainerView.swift; sourceTree = "<group>"; };
 		01851861300853EC0005B85D /* RunScoreCalculator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RunScoreCalculator.swift; sourceTree = "<group>"; };
 		01851863300EA34C0005B85D /* RunScoreDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RunScoreDetailView.swift; sourceTree = "<group>"; };
+		0185186530116FE40005B85D /* NotificationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationManager.swift; sourceTree = "<group>"; };
+		018518673011702D0005B85D /* WeeklyRecapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeeklyRecapView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -103,6 +107,7 @@
 		0185183C300044AF0005B85D /* Services */ = {
 			isa = PBXGroup;
 			children = (
+				0185186530116FE40005B85D /* NotificationManager.swift */,
 				01851861300853EC0005B85D /* RunScoreCalculator.swift */,
 				01851859300058300005B85D /* DebugSeeder.swift */,
 				01851843300045560005B85D /* HealthKitManager.swift */,
@@ -124,6 +129,7 @@
 		0185183E300044C10005B85D /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				018518673011702D0005B85D /* WeeklyRecapView.swift */,
 				01851863300EA34C0005B85D /* RunScoreDetailView.swift */,
 				0185185F300802FD0005B85D /* BaselineExplainerView.swift */,
 				0185184A300052C00005B85D /* RootView.swift */,
@@ -216,11 +222,13 @@
 				0185184F300054CF0005B85D /* PredictionEngine.swift in Sources */,
 				01851855300054ED0005B85D /* MainDashboardView.swift in Sources */,
 				01851854300054E90005B85D /* WelcomeView.swift in Sources */,
+				018518683011702F0005B85D /* WeeklyRecapView.swift in Sources */,
 				0185185A300058320005B85D /* DebugSeeder.swift in Sources */,
 				01851856300054F10005B85D /* MetricsAnalyticsView.swift in Sources */,
 				0185184E300054CA0005B85D /* AppSettings.swift in Sources */,
 				01851860300802FF0005B85D /* BaselineExplainerView.swift in Sources */,
 				0185184D300054BE0005B85D /* RunWorkout.swift in Sources */,
+				0185186630116FE50005B85D /* NotificationManager.swift in Sources */,
 				01851850300054D30005B85D /* EfficiencyCalculator.swift in Sources */,
 				01851853300054DF0005B85D /* AnalyticsViewModel.swift in Sources */,
 				01851862300853EE0005B85D /* RunScoreCalculator.swift in Sources */,

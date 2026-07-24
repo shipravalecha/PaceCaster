@@ -14,6 +14,7 @@ struct RootView: View {
     @Environment(\.modelContext) private var modelContext
     @State private var isScanning = false
     @State private var didFinishSetup = false
+    @EnvironmentObject private var notificationManager: NotificationManager
 
     var body: some View {
         Group {
@@ -35,6 +36,11 @@ struct RootView: View {
                     registerSync()
                 }
             }
+        .sheet(isPresented: $notificationManager.pendingDeepLinkToRecap) {
+            NavigationStack {
+                WeeklyRecapView(showsDoneButton: true)
+            }
+        }
     }
 
     private var scanningView: some View {

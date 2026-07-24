@@ -18,9 +18,13 @@ struct HealthSyncSettingsView: View {
     @State private var showAgePrompt = false
     @State private var ageInput = ""
     @FocusState private var maxHRFieldFocused: Bool
+    @EnvironmentObject private var notificationManager: NotificationManager
+    @State private var isRequestingPermission = false
+    @State private var settingsScreenReady = false
 
     var body: some View {
         Form {
+            
             Section("HealthKit Access") {
                 Text("PaceCaster reads Workouts, Heart Rate, and Running Distance. iOS doesn't let apps check exact read-permission status — you can review or change exactly what's shared in the Health app.")
                     .font(.footnote)
@@ -41,6 +45,7 @@ struct HealthSyncSettingsView: View {
                         .foregroundStyle(.secondary)
                 }
             }
+            
             Button("Sync Now") {
                 Task {
                     let workouts = (try? await healthKitManager.scanLast90Days()) ?? []
@@ -133,8 +138,41 @@ struct HealthSyncSettingsView: View {
                 }
             }
             #endif
+            
+            Section {
+                Toggle("Weekly Recap Notification", isOn: $settings.weeklyRecapEnabled)
+                    .onChange(of: settings.weeklyRecapEnabled) { _, enabled in
+                        Task {
+                            if enabled {
+                                isRequestingPermission = true
+                                print("isRequestingPermission changed")
+                                defer { isRequestingPermission = false }
+                                await notificationManager.requestAuthorizationIfNeeded()
+                                try? await Task.sleep(nanoseconds: 400_000_000)
+                                if notificationManager.authorizationGranted {
+                                    notificationManager.scheduleWeeklyRecap()
+                                } else {
+                                    settings.weeklyRecapEnabled = false
+                                }
+                            } else {
+                                notificationManager.cancelWeeklyRecap()
+                            }
+                        }
+                    }
+                NavigationLink {
+                    WeeklyRecapView(showsDoneButton: false)
+                } label: {
+                    Text("Preview Recap")
+                }
+                .disabled(isRequestingPermission)
+            } header: {
+                Text("Weekly Recap")
+            } footer: {
+                Text("Get a notification every Sunday evening summarizing your training.")
+            }
         }
-        .scrollDismissesKeyboard(.immediately)   // ← tapping/scrolling anywhere dismisses the keyboard
+        
+        .scrollDismissesKeyboard(.immediately)
         .onDisappear {
             // Guaranteed fallback: commits "manually confirmed" the moment this
             // screen is left, regardless of how — back button, swipe, or tab switch.

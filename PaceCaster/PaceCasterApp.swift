@@ -5,6 +5,7 @@ import SwiftData
 struct PaceCasterApp: App {
     @StateObject private var settings = AppSettings.shared
     @StateObject private var healthKitManager = HealthKitManager.shared
+    @StateObject private var notificationManager = NotificationManager.shared
 
     var sharedModelContainer: ModelContainer = {
         let schema = Schema([RunWorkout.self])
@@ -17,6 +18,7 @@ struct PaceCasterApp: App {
             RootView()
                 .environmentObject(settings)
                 .environmentObject(healthKitManager)
+                .environmentObject(notificationManager)
         }
         .modelContainer(sharedModelContainer)
     }

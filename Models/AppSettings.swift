@@ -20,9 +20,15 @@ final class AppSettings: ObservableObject {
     @Published var measurementUnit: MeasurementUnit {
         didSet { UserDefaults.standard.set(measurementUnit.rawValue, forKey: Keys.unit) }
     }
+    
+    @Published var weeklyRecapEnabled: Bool {
+        didSet { UserDefaults.standard.set(weeklyRecapEnabled, forKey: Keys.weeklyRecapEnabled) }
+    }
+    
     @Published var hasCompletedOnboarding: Bool {
         didSet { UserDefaults.standard.set(hasCompletedOnboarding, forKey: Keys.onboarded) }
     }
+    
     @Published var lastSyncedAt: Date? {
         didSet {
             if let lastSyncedAt {
@@ -34,6 +40,7 @@ final class AppSettings: ObservableObject {
     @Published var maxHeartRate: Int {
         didSet { UserDefaults.standard.set(maxHeartRate, forKey: Keys.maxHR) }
     }
+    
     @Published var maxHRIsEstimated: Bool {
         didSet { UserDefaults.standard.set(maxHRIsEstimated, forKey: Keys.maxHRIsEstimated) }
     }
@@ -44,9 +51,11 @@ final class AppSettings: ObservableObject {
         static let lastSynced = "lastSyncedAt"
         static let maxHR = "maxHeartRate"
         static let maxHRIsEstimated = "maxHRIsEstimated"
+        static let weeklyRecapEnabled = "weeklyRecapEnabled"
     }
 
     private init() {
+        weeklyRecapEnabled = UserDefaults.standard.bool(forKey: Keys.weeklyRecapEnabled)
         if let saved = UserDefaults.standard.string(forKey: Keys.unit),
            let unit = MeasurementUnit(rawValue: saved) {
             measurementUnit = unit
