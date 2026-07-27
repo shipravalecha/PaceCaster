@@ -29,6 +29,8 @@ struct RunScoreResult {
     let pacingControlPoints: Int    // out of 30
     let effortSpikePoints: Int      // out of 20
     let aerobicPercent: Double
+    let tempoPercent: Double
+    let anaerobicPercent: Double
     let spikeCount: Int
 }
 
@@ -48,6 +50,8 @@ enum RunScoreCalculator {
         let anaerobicFloor = maxHR * 0.90
 
         var aerobicSeconds: Double = 0
+        var tempoSeconds: Double = 0
+        var anaerobicSeconds: Double = 0
         var totalSeconds: Double = 0
         var spikeCount = 0
         var wasAboveThreshold = false
@@ -58,9 +62,15 @@ enum RunScoreCalculator {
             let interval = next.date.timeIntervalSince(current.date)
             guard interval > 0 else { continue }
             totalSeconds += interval
+            
             if current.bpm < aerobicCeiling {
                 aerobicSeconds += interval
+            } else if current.bpm < anaerobicFloor {
+                tempoSeconds += interval
+            } else {
+                anaerobicSeconds += interval
             }
+            
             let isAboveThreshold = current.bpm >= anaerobicFloor
             if isAboveThreshold && !wasAboveThreshold {
                 spikeCount += 1
@@ -70,6 +80,8 @@ enum RunScoreCalculator {
 
         guard totalSeconds > 0 else { return nil }
         let aerobicPercent = aerobicSeconds / totalSeconds
+        let tempoPercent = tempoSeconds / totalSeconds
+        let anaerobicPercent = anaerobicSeconds / totalSeconds
 
         // Full 50 points at 90%+ time spent aerobic
         let aerobicTimePoints = min(50, Int(((aerobicPercent / 0.9) * 50).rounded()))
@@ -84,13 +96,15 @@ enum RunScoreCalculator {
 
         let total = aerobicTimePoints + pacingControlPoints + effortSpikePoints
         return RunScoreResult(
-            totalScore: total,
-            aerobicTimePoints: aerobicTimePoints,
-            pacingControlPoints: pacingControlPoints,
-            effortSpikePoints: effortSpikePoints,
-            aerobicPercent: aerobicPercent * 100,
-            spikeCount: spikeCount
-        )
+                totalScore: total,
+                aerobicTimePoints: aerobicTimePoints,
+                pacingControlPoints: pacingControlPoints,
+                effortSpikePoints: effortSpikePoints,
+                aerobicPercent: aerobicPercent * 100,
+                tempoPercent: tempoPercent * 100,
+                anaerobicPercent: anaerobicPercent * 100,
+                spikeCount: spikeCount
+            )
     }
 
     /// Buckets the run into 60-second windows, computes EF per bucket, and scores

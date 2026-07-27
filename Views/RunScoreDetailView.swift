@@ -136,7 +136,7 @@ struct RunScoreDetailView: View {
                 outOf: 50,
                 color: .green,
                 stat: aerobicStat(for: run),
-                explanation: "Measures how much of your run stayed in a steady, sustainable effort - roughly below 80% of your max heart rate. More aerobic time means your body was working efficiently rather than straining."
+                explanation: "Aerobic means a steady, sustainable effort - roughly below 80% of your max heart rate. Tempo is a harder but still controlled effort - around 80-90% of your max. Anaerobic is a near-maximum push that can't be sustained long, it is when your heart rate is over 90% of your max. More aerobic time means your body was working efficiently rather than straining. Aerobic is a great thing, as it helps build endurance. Tempo is great, as it helps build strength. And anaerobic is bad, as it can lead to injury"
             )
             Divider()
             factorDetail(
@@ -180,8 +180,10 @@ struct RunScoreDetailView: View {
     }
 
     private func aerobicStat(for run: RunWorkout) -> String {
-        guard let percent = run.aerobicPercent else { return "Not enough data for this run." }
-        return String(format: "You spent about %.0f%% of this run in your aerobic zone.", percent)
+        guard let aerobic = run.aerobicPercent else { return "Not enough data for this run." }
+        let tempo = run.tempoPercent ?? 0
+        let anaerobic = run.anaerobicPercent ?? 0
+        return String(format: "%.0f%% aerobic · %.0f%% tempo · %.0f%% anaerobic", aerobic, tempo, anaerobic)
     }
 
     private func pacingStat(for run: RunWorkout) -> String {

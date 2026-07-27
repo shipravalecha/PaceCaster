@@ -105,6 +105,8 @@ final class HealthKitManager: ObservableObject {
             run.pacingControlPoints = result.pacingControlPoints
             run.effortSpikePoints = result.effortSpikePoints
             run.aerobicPercent = result.aerobicPercent
+            run.tempoPercent = result.tempoPercent
+            run.anaerobicPercent = result.anaerobicPercent
             run.effortSpikeCount = result.spikeCount
         }
 

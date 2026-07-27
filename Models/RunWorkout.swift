@@ -23,6 +23,8 @@ final class RunWorkout {
     var pacingControlPoints: Int?
     var effortSpikePoints: Int?
     var aerobicPercent: Double?
+    var tempoPercent: Double?
+    var anaerobicPercent: Double?
     var effortSpikeCount: Int?
 
     init(healthKitUUID: UUID,
