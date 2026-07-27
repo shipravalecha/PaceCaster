@@ -128,7 +128,7 @@ final class HealthKitManager: ObservableObject {
         }
     }
 
-    private func distanceSamples(for workout: HKWorkout) async throws -> [(date: Date, meters: Double)] {
+    private func distanceSamples(for workout: HKWorkout) async throws -> [(date: Date, endDate: Date, meters: Double)] {
         try await withCheckedThrowingContinuation { continuation in
             let predicate = HKQuery.predicateForSamples(withStart: workout.startDate, end: workout.endDate, options: .strictStartDate)
             let query = HKSampleQuery(sampleType: distanceType, predicate: predicate, limit: HKObjectQueryNoLimit,
@@ -138,7 +138,9 @@ final class HealthKitManager: ObservableObject {
                     return
                 }
                 let distSamples = (samples as? [HKQuantitySample]) ?? []
-                continuation.resume(returning: distSamples.map { (date: $0.startDate, meters: $0.quantity.doubleValue(for: .meter())) })
+                continuation.resume(returning: distSamples.map {
+                    (date: $0.startDate, endDate: $0.endDate, meters: $0.quantity.doubleValue(for: .meter()))
+                })
             }
             healthStore.execute(query)
         }

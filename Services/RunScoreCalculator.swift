@@ -38,7 +38,7 @@ enum RunScoreCalculator {
     /// distanceSamples: incremental distance samples (meters recorded at that instant), sorted ascending.
     static func compute(
         heartRateSamples: [(date: Date, bpm: Double)],
-        distanceSamples: [(date: Date, meters: Double)],
+        distanceSamples: [(date: Date, endDate: Date, meters: Double)],
         maxHeartRate: Int
     ) -> RunScoreResult? {
         guard heartRateSamples.count >= 10 else { return nil }
@@ -97,10 +97,10 @@ enum RunScoreCalculator {
     /// consistency (lower variability across buckets = better pacing discipline).
     private static func computePacingControl(
         heartRateSamples: [(date: Date, bpm: Double)],
-        distanceSamples: [(date: Date, meters: Double)]
+        distanceSamples: [(date: Date, endDate: Date, meters: Double)]
     ) -> Int {
         guard let start = heartRateSamples.first?.date, let end = heartRateSamples.last?.date, end > start else {
-            return 15 // not enough signal either way — neutral partial credit
+            return 15
         }
 
         let bucketSize: TimeInterval = 60
@@ -110,8 +110,21 @@ enum RunScoreCalculator {
         while bucketStart < end {
             let bucketEnd = bucketStart.addingTimeInterval(bucketSize)
             let hrInBucket = heartRateSamples.filter { $0.date >= bucketStart && $0.date < bucketEnd }
-            let distInBucket = distanceSamples.filter { $0.date >= bucketStart && $0.date < bucketEnd }
-            let totalDist = distInBucket.reduce(0) { $0 + $1.meters }
+
+            // Prorate each distance sample across every bucket it overlaps,
+            // instead of dumping its whole value into one bucket based on start time alone.
+            var totalDist: Double = 0
+            for sample in distanceSamples {
+                let sampleDuration = sample.endDate.timeIntervalSince(sample.date)
+                guard sampleDuration > 0 else { continue }
+                let overlapStart = max(sample.date, bucketStart)
+                let overlapEnd = min(sample.endDate, bucketEnd)
+                let overlap = overlapEnd.timeIntervalSince(overlapStart)
+                if overlap > 0 {
+                    let fraction = overlap / sampleDuration
+                    totalDist += sample.meters * fraction
+                }
+            }
 
             if !hrInBucket.isEmpty, totalDist > 0 {
                 let avgHR = hrInBucket.reduce(0) { $0 + $1.bpm } / Double(hrInBucket.count)
@@ -123,14 +136,13 @@ enum RunScoreCalculator {
             bucketStart = bucketEnd
         }
 
-        guard bucketEFs.count >= 3 else { return 20 } // too short to judge fairly — partial credit, not zero
+        guard bucketEFs.count >= 3 else { return 20 }
 
         let mean = bucketEFs.reduce(0, +) / Double(bucketEFs.count)
         guard mean > 0 else { return 15 }
         let variance = bucketEFs.reduce(0) { $0 + pow($1 - mean, 2) } / Double(bucketEFs.count)
         let coefficientOfVariation = sqrt(variance) / mean
 
-        // 0.0 CoV → 30 points, 0.5+ CoV → 0 points
         let points = max(0, 30 - Int(((coefficientOfVariation / 0.5) * 30).rounded()))
         return min(30, points)
     }
