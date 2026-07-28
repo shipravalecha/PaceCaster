@@ -50,14 +50,10 @@ struct HealthSyncSettingsView: View {
                 Task {
                     let workouts = (try? await healthKitManager.scanLast90Days()) ?? []
                     for workout in workouts {
-                        let uuid = workout.healthKitUUID
-                        let descriptor = FetchDescriptor<RunWorkout>(predicate: #Predicate { $0.healthKitUUID == uuid })
-                        if (try? modelContext.fetch(descriptor))?.isEmpty ?? true {
-                            modelContext.insert(workout)
-                        }
+                        WorkoutSyncHelper.insertIfNew(workout, modelContext: modelContext)
                     }
-                    try? modelContext.save()
                     settings.lastSyncedAt = Date()
+                    MilestoneChecker.rebuildAllMilestones(modelContext: modelContext, notifyForRunUUID: nil)
                 }
             }
 
@@ -136,6 +132,9 @@ struct HealthSyncSettingsView: View {
                 Button("Clear Test Data", role: .destructive) {
                     DebugSeeder.clear(modelContext: modelContext)
                 }
+                Button("Seed Milestone-Beating Run") {
+                    DebugSeeder.seedMilestoneBeatingRun(into: modelContext)
+                }
             }
             #endif
             
@@ -212,6 +211,7 @@ struct HealthSyncSettingsView: View {
     private func flushDatabase() {
         do {
             try modelContext.delete(model: RunWorkout.self)
+            try modelContext.delete(model: Milestone.self)
             try modelContext.save()
         } catch {
             flushError = "Something went wrong while deleting your data. Your existing data has been kept."

@@ -58,12 +58,12 @@ struct RootView: View {
             insertIfNew(workout)
         }
         try? modelContext.save()
+        MilestoneChecker.rebuildAllMilestones(modelContext: modelContext, notifyForRunUUID: nil)
         settings.lastSyncedAt = Date()
 
         healthKitManager.registerObserverQuery { newWorkout in
             Task { @MainActor in
                 self.insertIfNew(newWorkout)
-                try? self.modelContext.save()
                 self.settings.lastSyncedAt = Date()
             }
         }
@@ -76,20 +76,18 @@ struct RootView: View {
     private func registerSync() {
         healthKitManager.registerObserverQuery { newWorkout in
             Task { @MainActor in
-                self.insertIfNew(newWorkout)
+                let wasNew = self.insertIfNew(newWorkout)
                 try? self.modelContext.save()
                 self.settings.lastSyncedAt = Date()
+                if wasNew {
+                    MilestoneChecker.rebuildAllMilestones(modelContext: self.modelContext, notifyForRunUUID: newWorkout.healthKitUUID)
+                }
             }
         }
     }
 
-    /// Req 2.6: dedupe by HealthKit workout UUID
-    private func insertIfNew(_ workout: RunWorkout) {
-        let uuid = workout.healthKitUUID
-        let descriptor = FetchDescriptor<RunWorkout>(predicate: #Predicate { $0.healthKitUUID == uuid })
-        let existing = (try? modelContext.fetch(descriptor)) ?? []
-        if existing.isEmpty {
-            modelContext.insert(workout)
-        }
+    @discardableResult
+    private func insertIfNew(_ workout: RunWorkout) -> Bool {
+        WorkoutSyncHelper.insertIfNew(workout, modelContext: modelContext)
     }
 }

@@ -18,6 +18,7 @@ struct MetricsAnalyticsView: View {
             VStack(alignment: .leading, spacing: 28) {
                 efficiencySection
                 volumeSection
+                MilestonesSection()
             }
             .padding()
         }

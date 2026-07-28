@@ -26,6 +26,10 @@
 		01851864300EA34E0005B85D /* RunScoreDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01851863300EA34C0005B85D /* RunScoreDetailView.swift */; };
 		0185186630116FE50005B85D /* NotificationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0185186530116FE40005B85D /* NotificationManager.swift */; };
 		018518683011702F0005B85D /* WeeklyRecapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 018518673011702D0005B85D /* WeeklyRecapView.swift */; };
+		0185186C30194D4B0005B85D /* Milestone.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0185186B30194D4A0005B85D /* Milestone.swift */; };
+		0185186E30194D7E0005B85D /* MilestoneChecker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0185186D30194D7D0005B85D /* MilestoneChecker.swift */; };
+		0185187030194F0D0005B85D /* MilestonesSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0185186F30194F0B0005B85D /* MilestonesSection.swift */; };
+		0185187230195C010005B85D /* WorkoutSyncHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0185187130195C000005B85D /* WorkoutSyncHelper.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -49,6 +53,10 @@
 		01851863300EA34C0005B85D /* RunScoreDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RunScoreDetailView.swift; sourceTree = "<group>"; };
 		0185186530116FE40005B85D /* NotificationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationManager.swift; sourceTree = "<group>"; };
 		018518673011702D0005B85D /* WeeklyRecapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeeklyRecapView.swift; sourceTree = "<group>"; };
+		0185186B30194D4A0005B85D /* Milestone.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Milestone.swift; sourceTree = "<group>"; };
+		0185186D30194D7D0005B85D /* MilestoneChecker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MilestoneChecker.swift; sourceTree = "<group>"; };
+		0185186F30194F0B0005B85D /* MilestonesSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MilestonesSection.swift; sourceTree = "<group>"; };
+		0185187130195C000005B85D /* WorkoutSyncHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkoutSyncHelper.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -98,6 +106,7 @@
 		0185183B300044A50005B85D /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				0185186B30194D4A0005B85D /* Milestone.swift */,
 				01851840300045110005B85D /* AppSettings.swift */,
 				0185183F300044F00005B85D /* RunWorkout.swift */,
 			);
@@ -107,6 +116,8 @@
 		0185183C300044AF0005B85D /* Services */ = {
 			isa = PBXGroup;
 			children = (
+				0185187130195C000005B85D /* WorkoutSyncHelper.swift */,
+				0185186D30194D7D0005B85D /* MilestoneChecker.swift */,
 				0185186530116FE40005B85D /* NotificationManager.swift */,
 				01851861300853EC0005B85D /* RunScoreCalculator.swift */,
 				01851859300058300005B85D /* DebugSeeder.swift */,
@@ -129,6 +140,7 @@
 		0185183E300044C10005B85D /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				0185186F30194F0B0005B85D /* MilestonesSection.swift */,
 				018518673011702D0005B85D /* WeeklyRecapView.swift */,
 				01851863300EA34C0005B85D /* RunScoreDetailView.swift */,
 				0185185F300802FD0005B85D /* BaselineExplainerView.swift */,
@@ -216,6 +228,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0185187230195C010005B85D /* WorkoutSyncHelper.swift in Sources */,
 				01851857300054F50005B85D /* HealthSyncSettingsView.swift in Sources */,
 				01851851300054D70005B85D /* HealthKitManager.swift in Sources */,
 				01851852300054DB0005B85D /* DashboardViewModel.swift in Sources */,
@@ -230,9 +243,12 @@
 				0185184D300054BE0005B85D /* RunWorkout.swift in Sources */,
 				0185186630116FE50005B85D /* NotificationManager.swift in Sources */,
 				01851850300054D30005B85D /* EfficiencyCalculator.swift in Sources */,
+				0185186E30194D7E0005B85D /* MilestoneChecker.swift in Sources */,
 				01851853300054DF0005B85D /* AnalyticsViewModel.swift in Sources */,
 				01851862300853EE0005B85D /* RunScoreCalculator.swift in Sources */,
 				01851858300054F90005B85D /* RootView.swift in Sources */,
+				0185186C30194D4B0005B85D /* Milestone.swift in Sources */,
+				0185187030194F0D0005B85D /* MilestonesSection.swift in Sources */,
 				01851864300EA34E0005B85D /* RunScoreDetailView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

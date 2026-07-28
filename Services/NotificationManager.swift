@@ -57,6 +57,28 @@ final class NotificationManager: NSObject, ObservableObject {
     func cancelWeeklyRecap() {
         UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: [Self.weeklyRecapIdentifier])
     }
+    
+    func sendMilestoneNotification(type: MilestoneType, value: Double) {
+        let content = UNMutableNotificationContent()
+        content.title = type.notificationTitle
+        content.body = milestoneBody(for: type, value: value)
+        content.sound = .default
+
+        let request = UNNotificationRequest(identifier: "milestone-\(UUID().uuidString)", content: content, trigger: nil) // nil trigger = fires immediately
+        UNUserNotificationCenter.current().add(request)
+    }
+
+    private func milestoneBody(for type: MilestoneType, value: Double) -> String {
+        switch type {
+        case .bestEF:
+            return String(format: "Your Aerobic Baseline just hit %.2f — your best yet.", value)
+        case .bestRunScore:
+            return "You just posted a Run Score of \(Int(value)) — your highest yet."
+        case .longestRun:
+            let miles = value / 1609.344
+            return String(format: "You just ran %.1f miles — your longest run yet.", miles)
+        }
+    }
 }
 
 extension NotificationManager: UNUserNotificationCenterDelegate {

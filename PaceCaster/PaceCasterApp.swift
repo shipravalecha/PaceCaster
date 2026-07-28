@@ -8,7 +8,7 @@ struct PaceCasterApp: App {
     @StateObject private var notificationManager = NotificationManager.shared
 
     var sharedModelContainer: ModelContainer = {
-        let schema = Schema([RunWorkout.self])
+        let schema = Schema([RunWorkout.self, Milestone.self])
         let config = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
         return try! ModelContainer(for: schema, configurations: [config])
     }()

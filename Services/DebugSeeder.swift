@@ -99,6 +99,7 @@ enum DebugSeeder {
     /// Removes all seeded/real data — same effect as a Database Flush.
     static func clear(modelContext: ModelContext) {
         try? modelContext.delete(model: RunWorkout.self)
+        try? modelContext.delete(model: Milestone.self)
         try? modelContext.save()
     }
     
@@ -117,6 +118,48 @@ enum DebugSeeder {
         // qualify as steady-state, so it shouldn't have an EF value at all.
         modelContext.insert(flaggedRun)
         try? modelContext.save()
+    }
+    
+    /// Seeds a single run that beats all three milestone thresholds at once,
+    /// so you can verify detection, notification, and the Trends list in one shot.
+    static func seedMilestoneBeatingRun(into modelContext: ModelContext) {
+        let descriptor = FetchDescriptor<RunWorkout>()
+        let allRuns = (try? modelContext.fetch(descriptor)) ?? []
+
+        let currentBestEF = allRuns.compactMap { $0.efficiencyFactor }.max() ?? 0
+        let currentBestScore = allRuns.compactMap { $0.runScore }.max() ?? 0
+        let currentLongestDistance = allRuns.compactMap { $0.distanceMeters }.max() ?? 0
+
+        // Build a run that's deliberately better than all three, so every milestone fires.
+        let newDistance = max(currentLongestDistance + 1000, 8000) // at least 1km further, or 8km if no prior data
+        let targetEF = currentBestEF + 0.2
+        let avgHR: Double = 150
+        // EF = (speed / HR) * 100  =>  speed = (EF * HR) / 100
+        let speed = (targetEF * avgHR) / 100
+        let duration = newDistance / speed
+
+        let run = RunWorkout(
+            healthKitUUID: UUID(),
+            startDate: Date(),
+            durationSeconds: duration,
+            distanceMeters: newDistance,
+            averageHeartRate: avgHR,
+            heartRateSampleCount: 50
+        )
+        run.efficiencyFactor = targetEF
+        run.runScore = max(currentBestScore + 5, 85)
+        run.aerobicTimePoints = 45
+        run.pacingControlPoints = 28
+        run.effortSpikePoints = 18
+        run.aerobicPercent = 85
+        run.tempoPercent = 12
+        run.anaerobicPercent = 3
+        run.effortSpikeCount = 0
+
+        modelContext.insert(run)
+        try? modelContext.save()
+
+        MilestoneChecker.rebuildAllMilestones(modelContext: modelContext, notifyForRunUUID: run.healthKitUUID)
     }
 }
 #endif
