@@ -83,15 +83,22 @@ final class NotificationManager: NSObject, ObservableObject {
 
 extension NotificationManager: UNUserNotificationCenterDelegate {
     nonisolated func userNotificationCenter(_ center: UNUserNotificationCenter,
-                                             willPresent notification: UNNotification) async -> UNNotificationPresentationOptions {
-        [.banner, .sound]
+                                             willPresent notification: UNNotification,
+                                             withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
+        completionHandler([.banner, .sound])
     }
 
     nonisolated func userNotificationCenter(_ center: UNUserNotificationCenter,
-                                             didReceive response: UNNotificationResponse) async {
-        guard response.notification.request.identifier == NotificationManager.weeklyRecapIdentifier else { return }
-        await MainActor.run {
-            NotificationManager.shared.pendingDeepLinkToRecap = true
+                                             didReceive response: UNNotificationResponse,
+                                             withCompletionHandler completionHandler: @escaping () -> Void) {
+        let identifier = response.notification.request.identifier
+        DispatchQueue.main.async {
+            if identifier == NotificationManager.weeklyRecapIdentifier {
+                NotificationManager.shared.pendingDeepLinkToRecap = true
+            }
+            // Milestone notifications (identifier starts with "milestone-") currently
+            // have no deep link - tapping them just opens the app normally, which is fine.
+            completionHandler()
         }
     }
 }
