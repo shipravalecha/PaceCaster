@@ -102,9 +102,16 @@ final class AppSettings: ObservableObject {
         if let distance = goalRaceDistance, let date = goalRaceDate {
             UserDefaults.standard.set(distance.rawValue, forKey: Keys.goalRaceDistance)
             UserDefaults.standard.set(date, forKey: Keys.goalRaceDate)
+            Task {
+                await NotificationManager.shared.requestAuthorizationIfNeeded()
+                if NotificationManager.shared.authorizationGranted {
+                    NotificationManager.shared.scheduleGoalRaceCountdown(raceDate: date, raceLabel: distance.label)
+                }
+            }
         } else {
             UserDefaults.standard.removeObject(forKey: Keys.goalRaceDistance)
             UserDefaults.standard.removeObject(forKey: Keys.goalRaceDate)
+            NotificationManager.shared.cancelGoalRaceCountdown()
         }
     }
 
@@ -114,6 +121,7 @@ final class AppSettings: ObservableObject {
         if Date() >= dayAfterRace {
             goalRaceDistance = nil
             goalRaceDate = nil
+            NotificationManager.shared.cancelGoalRaceCountdown()
         }
     }
 }
