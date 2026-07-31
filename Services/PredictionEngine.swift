@@ -7,8 +7,11 @@
 
 import Foundation
 
-enum TargetDistance: CaseIterable, Identifiable, Hashable {
-    case fiveK, tenK, fifteenK, halfMarathon
+enum TargetDistance: String, CaseIterable, Identifiable, Hashable {
+    case fiveK = "5K"
+    case tenK = "10K"
+    case fifteenK = "15K"
+    case halfMarathon = "Half"
 
     var id: Self { self }
 

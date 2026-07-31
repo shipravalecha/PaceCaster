@@ -32,6 +32,10 @@ final class DashboardViewModel: ObservableObject {
     @Published var effortSpikePoints: Int?
     @Published var effortSpikeCount: Int?
     @Published var scoredRuns: [RunWorkout] = []
+    @Published var goalRaceDaysRemaining: Int?
+    @Published var goalRaceLabel: String?
+    @Published var goalRacePredictedFinish: String?
+    @Published var goalRaceSplitPace: String?
     
     enum EFTrendDirection {
         case up, down, flat
@@ -130,6 +134,7 @@ final class DashboardViewModel: ObservableObject {
         updateRecentRunNote(baseline: baseline, mostRecent: mostRecent)
         recomputeCast()
         isLoading = false
+        updateGoalRace()
     }
     
     private func updateRecentRunNote(baseline: RunWorkout?, mostRecent: RunWorkout?) {
@@ -199,6 +204,41 @@ final class DashboardViewModel: ObservableObject {
         splitPace = PredictionEngine.splitPace(
             finishTimeSeconds: cast.finishTimeSeconds,
             distanceMeters: targetDistance.meters,
+            unit: settings.measurementUnit
+        )
+    }
+    
+    private func updateGoalRace() {
+        settings.clearGoalRaceIfPast()
+
+        guard let raceDistance = settings.goalRaceDistance, let raceDate = settings.goalRaceDate else {
+            goalRaceDaysRemaining = nil
+            goalRaceLabel = nil
+            goalRacePredictedFinish = nil
+            goalRaceSplitPace = nil
+            return
+        }
+
+        let days = Calendar.current.dateComponents([.day], from: Calendar.current.startOfDay(for: Date()), to: Calendar.current.startOfDay(for: raceDate)).day ?? 0
+        goalRaceDaysRemaining = max(0, days)
+        goalRaceLabel = raceDistance.label
+
+        guard let baseline = EfficiencyCalculator.aggregatedBaseline(from: allWorkouts),
+              let distance = baseline.distanceMeters, distance > 0,
+              let cast = PredictionEngine.predict(
+                  baselineDurationSeconds: baseline.durationSeconds,
+                  baselineDistanceMeters: distance,
+                  targetDistance: raceDistance
+              ) else {
+            goalRacePredictedFinish = nil
+            goalRaceSplitPace = nil
+            return
+        }
+
+        goalRacePredictedFinish = PredictionEngine.formatFinishTime(cast.finishTimeSeconds)
+        goalRaceSplitPace = PredictionEngine.splitPace(
+            finishTimeSeconds: cast.finishTimeSeconds,
+            distanceMeters: raceDistance.meters,
             unit: settings.measurementUnit
         )
     }

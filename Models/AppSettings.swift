@@ -44,6 +44,14 @@ final class AppSettings: ObservableObject {
     @Published var maxHRIsEstimated: Bool {
         didSet { UserDefaults.standard.set(maxHRIsEstimated, forKey: Keys.maxHRIsEstimated) }
     }
+    
+    @Published var goalRaceDistance: TargetDistance? {
+        didSet { persistGoalRace() }
+    }
+    
+    @Published var goalRaceDate: Date? {
+        didSet { persistGoalRace() }
+    }
 
     private enum Keys {
         static let unit = "measurementUnit"
@@ -52,6 +60,8 @@ final class AppSettings: ObservableObject {
         static let maxHR = "maxHeartRate"
         static let maxHRIsEstimated = "maxHRIsEstimated"
         static let weeklyRecapEnabled = "weeklyRecapEnabled"
+        static let goalRaceDistance = "goalRaceDistance"
+        static let goalRaceDate = "goalRaceDate"
     }
 
     private init() {
@@ -74,9 +84,36 @@ final class AppSettings: ObservableObject {
             maxHeartRate = AppSettings.estimatedMaxHR(age: 35) // generic fallback until the user sets a real value
             maxHRIsEstimated = true
         }
+        if let rawValue = UserDefaults.standard.string(forKey: Keys.goalRaceDistance),
+           let date = UserDefaults.standard.object(forKey: Keys.goalRaceDate) as? Date {
+            goalRaceDistance = TargetDistance(rawValue: rawValue)
+            goalRaceDate = date
+        } else {
+            goalRaceDistance = nil
+            goalRaceDate = nil
+        }
     }
     
     static func estimatedMaxHR(age: Int) -> Int {
         Int((208 - 0.7 * Double(age)).rounded()) // Tanaka formula
+    }
+    
+    private func persistGoalRace() {
+        if let distance = goalRaceDistance, let date = goalRaceDate {
+            UserDefaults.standard.set(distance.rawValue, forKey: Keys.goalRaceDistance)
+            UserDefaults.standard.set(date, forKey: Keys.goalRaceDate)
+        } else {
+            UserDefaults.standard.removeObject(forKey: Keys.goalRaceDistance)
+            UserDefaults.standard.removeObject(forKey: Keys.goalRaceDate)
+        }
+    }
+
+    func clearGoalRaceIfPast() {
+        guard let date = goalRaceDate else { return }
+        let dayAfterRace = Calendar.current.date(byAdding: .day, value: 1, to: date) ?? date
+        if Date() >= dayAfterRace {
+            goalRaceDistance = nil
+            goalRaceDate = nil
+        }
     }
 }

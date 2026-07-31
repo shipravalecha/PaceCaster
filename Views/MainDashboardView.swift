@@ -17,6 +17,9 @@ struct MainDashboardView: View {
         NavigationStack {
             ScrollView {
                 VStack(spacing: 28) {
+                    if viewModel.goalRaceDaysRemaining != nil {
+                        goalRaceCallout
+                    }
                     baselineCard
                     runScoreSection
                     castSlider
@@ -179,6 +182,41 @@ struct MainDashboardView: View {
         .frame(maxWidth: .infinity)
         .padding()
         .background(.thinMaterial, in: RoundedRectangle(cornerRadius: 16))
+    }
+    
+    private var goalRaceCallout: some View {
+        VStack(spacing: 8) {
+            if let days = viewModel.goalRaceDaysRemaining, let label = viewModel.goalRaceLabel {
+                Text(days == 0 ? "Race Day — \(label)" : "\(days) Day\(days == 1 ? "" : "s") to Your \(label)")
+                    .font(.title3.weight(.bold))
+            }
+
+            if let finish = viewModel.goalRacePredictedFinish, let split = viewModel.goalRaceSplitPace {
+                HStack(spacing: 20) {
+                    VStack(spacing: 2) {
+                        Text("Projected Finish").font(.caption).foregroundStyle(.secondary)
+                        Text(finish).font(.headline)
+                    }
+                    VStack(spacing: 2) {
+                        Text("Target Split").font(.caption).foregroundStyle(.secondary)
+                        Text(split).font(.headline)
+                    }
+                }
+            } else {
+                Text("Complete a qualifying run to see your projected finish.")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+        }
+        .frame(maxWidth: .infinity)
+        .padding()
+        .background(
+            LinearGradient(colors: [.blue.opacity(0.15), .blue.opacity(0.05)], startPoint: .topLeading, endPoint: .bottomTrailing),
+            in: RoundedRectangle(cornerRadius: 16)
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 16).stroke(Color.blue.opacity(0.2), lineWidth: 1)
+        )
     }
     
     private var spikeSubtitle: String {

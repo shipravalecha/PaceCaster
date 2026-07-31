@@ -66,6 +66,41 @@ struct HealthSyncSettingsView: View {
             }
             
             Section {
+                Toggle("Set a Goal Race", isOn: Binding(
+                    get: { settings.goalRaceDate != nil },
+                    set: { isOn in
+                        if isOn {
+                            settings.goalRaceDistance = .fiveK
+                            settings.goalRaceDate = Calendar.current.date(byAdding: .day, value: 30, to: Date())
+                        } else {
+                            settings.goalRaceDistance = nil
+                            settings.goalRaceDate = nil
+                        }
+                    }
+                ))
+
+                if settings.goalRaceDate != nil {
+                    Picker("Race Distance", selection: Binding(
+                        get: { settings.goalRaceDistance ?? .fiveK },
+                        set: { settings.goalRaceDistance = $0 }
+                    )) {
+                        ForEach(TargetDistance.allCases) { distance in
+                            Text(distance.label).tag(distance)
+                        }
+                    }
+
+                    DatePicker("Race Date", selection: Binding(
+                        get: { settings.goalRaceDate ?? Date() },
+                        set: { settings.goalRaceDate = $0 }
+                    ), in: Date()..., displayedComponents: .date)
+                }
+            } header: {
+                Text("Goal Race")
+            } footer: {
+                Text("Set an upcoming race to see a personalized countdown on your dashboard.")
+            }
+            
+            Section {
                 HStack {
                     Text("Max Heart Rate")
                     Spacer()
