@@ -92,7 +92,7 @@ struct HealthSyncSettingsView: View {
                     DatePicker("Race Date", selection: Binding(
                         get: { settings.goalRaceDate ?? Date() },
                         set: { settings.goalRaceDate = $0 }
-                    ), in: Date()..., displayedComponents: .date)
+                    ), displayedComponents: .date)
                 }
             } header: {
                 Text("Goal Race")

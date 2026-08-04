@@ -35,6 +35,7 @@ struct RootView: View {
                 if settings.hasCompletedOnboarding {
                     registerSync()
                 }
+                settings.clearGoalRaceIfPast()
             }
         .sheet(isPresented: $notificationManager.pendingDeepLinkToRecap) {
             NavigationStack {
