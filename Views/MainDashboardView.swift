@@ -12,7 +12,8 @@ struct MainDashboardView: View {
     @Environment(\.modelContext) private var modelContext
     @StateObject private var viewModel = DashboardViewModel()
     @State private var showBaselineInfo = false
-
+    @State private var showSplits = false
+    
     var body: some View {
         NavigationStack {
             ScrollView {
@@ -28,6 +29,11 @@ struct MainDashboardView: View {
                 .padding()
                 .sheet(isPresented: $showBaselineInfo) {
                     BaselineExplainerView()
+                }
+                .navigationDestination(isPresented: $showSplits) {
+                    if let run = viewModel.latestRun {
+                        RunSplitsView(run: run)
+                    }
                 }
             }
             .navigationTitle("PaceCaster")
@@ -107,6 +113,13 @@ struct MainDashboardView: View {
                         }
                     }
                     .frame(maxWidth: .infinity)
+                }
+                
+                if viewModel.latestRun != nil {
+                    Button("View Splits") {
+                        showSplits = true
+                    }
+                    .font(.caption.weight(.medium))
                 }
 
                 if let note = viewModel.recentRunNote {

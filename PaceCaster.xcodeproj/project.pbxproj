@@ -30,6 +30,8 @@
 		0185186E30194D7E0005B85D /* MilestoneChecker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0185186D30194D7D0005B85D /* MilestoneChecker.swift */; };
 		0185187030194F0D0005B85D /* MilestonesSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0185186F30194F0B0005B85D /* MilestonesSection.swift */; };
 		0185187230195C010005B85D /* WorkoutSyncHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0185187130195C000005B85D /* WorkoutSyncHelper.swift */; };
+		0185187430216EC10005B85D /* SplitCalculator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0185187330216EC00005B85D /* SplitCalculator.swift */; };
+		0185187630216EEC0005B85D /* RunSplitsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0185187530216EEA0005B85D /* RunSplitsView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -57,6 +59,8 @@
 		0185186D30194D7D0005B85D /* MilestoneChecker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MilestoneChecker.swift; sourceTree = "<group>"; };
 		0185186F30194F0B0005B85D /* MilestonesSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MilestonesSection.swift; sourceTree = "<group>"; };
 		0185187130195C000005B85D /* WorkoutSyncHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkoutSyncHelper.swift; sourceTree = "<group>"; };
+		0185187330216EC00005B85D /* SplitCalculator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplitCalculator.swift; sourceTree = "<group>"; };
+		0185187530216EEA0005B85D /* RunSplitsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RunSplitsView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -116,6 +120,7 @@
 		0185183C300044AF0005B85D /* Services */ = {
 			isa = PBXGroup;
 			children = (
+				0185187330216EC00005B85D /* SplitCalculator.swift */,
 				0185187130195C000005B85D /* WorkoutSyncHelper.swift */,
 				0185186D30194D7D0005B85D /* MilestoneChecker.swift */,
 				0185186530116FE40005B85D /* NotificationManager.swift */,
@@ -140,6 +145,7 @@
 		0185183E300044C10005B85D /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				0185187530216EEA0005B85D /* RunSplitsView.swift */,
 				0185186F30194F0B0005B85D /* MilestonesSection.swift */,
 				018518673011702D0005B85D /* WeeklyRecapView.swift */,
 				01851863300EA34C0005B85D /* RunScoreDetailView.swift */,
@@ -233,6 +239,7 @@
 				01851851300054D70005B85D /* HealthKitManager.swift in Sources */,
 				01851852300054DB0005B85D /* DashboardViewModel.swift in Sources */,
 				0185184F300054CF0005B85D /* PredictionEngine.swift in Sources */,
+				0185187430216EC10005B85D /* SplitCalculator.swift in Sources */,
 				01851855300054ED0005B85D /* MainDashboardView.swift in Sources */,
 				01851854300054E90005B85D /* WelcomeView.swift in Sources */,
 				018518683011702F0005B85D /* WeeklyRecapView.swift in Sources */,
@@ -245,6 +252,7 @@
 				01851850300054D30005B85D /* EfficiencyCalculator.swift in Sources */,
 				0185186E30194D7E0005B85D /* MilestoneChecker.swift in Sources */,
 				01851853300054DF0005B85D /* AnalyticsViewModel.swift in Sources */,
+				0185187630216EEC0005B85D /* RunSplitsView.swift in Sources */,
 				01851862300853EE0005B85D /* RunScoreCalculator.swift in Sources */,
 				01851858300054F90005B85D /* RootView.swift in Sources */,
 				0185186C30194D4B0005B85D /* Milestone.swift in Sources */,

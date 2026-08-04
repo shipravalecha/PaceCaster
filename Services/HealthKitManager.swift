@@ -97,6 +97,19 @@ final class HealthKitManager: ObservableObject {
         if run.isSteadyState, let speed = run.averageSpeedMetersPerSecond, let hr = avgHR {
             run.efficiencyFactor = EfficiencyCalculator.computeEF(averageSpeedMetersPerSecond: speed, averageHeartRateBPM: hr)
         }
+        
+        let sortedDistSamples = distSamples.sorted { $0.date < $1.date }
+        var cumulative: Double = 0
+        var timeline: [(Double, Double)] = []
+        for sample in sortedDistSamples {
+            cumulative += sample.meters
+            let elapsed = sample.endDate.timeIntervalSince(workout.startDate)
+            timeline.append((elapsed, cumulative))
+        }
+        run.distanceTimeline = timeline
+        
+        let hrTimeline = hrSamples.map { (elapsedSeconds: $0.date.timeIntervalSince(workout.startDate), bpm: $0.bpm) }
+        run.heartRateTimeline = hrTimeline
 
         let maxHR = await MainActor.run { AppSettings.shared.maxHeartRate }
         if let result = RunScoreCalculator.compute(heartRateSamples: hrSamples, distanceSamples: distSamples, maxHeartRate: maxHR) {
@@ -140,7 +153,14 @@ final class HealthKitManager: ObservableObject {
                     return
                 }
                 let distSamples = (samples as? [HKQuantitySample]) ?? []
-                continuation.resume(returning: distSamples.map {
+
+                // If multiple sources contributed distance data, use only the source
+                // that contributed the most samples (typically the Watch during the
+                // workout itself) rather than blending overlapping sources together.
+                let bySource = Dictionary(grouping: distSamples) { $0.sourceRevision.source.bundleIdentifier }
+                let dominantSource = bySource.max { $0.value.count < $1.value.count }?.value ?? distSamples
+
+                continuation.resume(returning: dominantSource.map {
                     (date: $0.startDate, endDate: $0.endDate, meters: $0.quantity.doubleValue(for: .meter()))
                 })
             }

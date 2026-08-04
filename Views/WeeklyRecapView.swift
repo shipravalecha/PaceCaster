@@ -108,7 +108,6 @@ struct WeeklyRecapView: View {
     }
 
     private func loadData() {
-        print("🟡 loadData() called")
         let now = Date()
         let calendar = Calendar.current
         let weekAgo = calendar.date(byAdding: .day, value: -7, to: now)!
@@ -161,7 +160,7 @@ struct WeeklyRecapView: View {
         let lastWeekDistance = lastWeekRuns.reduce(0) { $0 + ($1.distanceMeters ?? 0) }
 
         guard lastWeekDistance > 0 else {
-            return thisWeekRuns.isEmpty ? "No runs logged this week." : "Nice work — keep the momentum going next week."
+            return thisWeekRuns.isEmpty ? "No runs logged this week." : "Nice work - keep the momentum going next week."
         }
         let percentChange = ((thisWeekDistance - lastWeekDistance) / lastWeekDistance) * 100
         if abs(percentChange) < 5 {

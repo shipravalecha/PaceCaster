@@ -36,6 +36,7 @@ final class DashboardViewModel: ObservableObject {
     @Published var goalRaceLabel: String?
     @Published var goalRacePredictedFinish: String?
     @Published var goalRaceSplitPace: String?
+    @Published var latestRun: RunWorkout?
     
     enum EFTrendDirection {
         case up, down, flat
@@ -88,6 +89,7 @@ final class DashboardViewModel: ObservableObject {
         // Stats row: most recent run OVERALL, regardless of qualification
         let mostRecent = allWorkouts.first
         latestRunDate = mostRecent?.startDate
+        latestRun = mostRecent
 
         if let mostRecent {
             if let distance = mostRecent.distanceMeters {

@@ -17,7 +17,6 @@ final class RunWorkout {
     var averageHeartRate: Double?
     var heartRateSampleCount: Int
     var efficiencyFactor: Double?
-    
     var runScore: Int?
     var aerobicTimePoints: Int?
     var pacingControlPoints: Int?
@@ -26,6 +25,8 @@ final class RunWorkout {
     var tempoPercent: Double?
     var anaerobicPercent: Double?
     var effortSpikeCount: Int?
+    var distanceTimelineData: Data?
+    var heartRateTimelineData: Data?
 
     init(healthKitUUID: UUID,
          startDate: Date,
@@ -51,5 +52,35 @@ final class RunWorkout {
     var averageSpeedMetersPerSecond: Double? {
         guard let distanceMeters else { return nil }
         return distanceMeters / durationSeconds
+    }
+    
+    var distanceTimeline: [(elapsedSeconds: Double, cumulativeMeters: Double)] {
+        get {
+            guard let data = distanceTimelineData,
+                  let raw = try? JSONDecoder().decode([[Double]].self, from: data) else { return [] }
+            return raw.compactMap { pair in
+                guard pair.count == 2 else { return nil }
+                return (pair[0], pair[1])
+            }
+        }
+        set {
+            let raw = newValue.map { [$0.elapsedSeconds, $0.cumulativeMeters] }
+            distanceTimelineData = try? JSONEncoder().encode(raw)
+        }
+    }
+    
+    var heartRateTimeline: [(elapsedSeconds: Double, bpm: Double)] {
+        get {
+            guard let data = heartRateTimelineData,
+                  let raw = try? JSONDecoder().decode([[Double]].self, from: data) else { return [] }
+            return raw.compactMap { pair in
+                guard pair.count == 2 else { return nil }
+                return (pair[0], pair[1])
+            }
+        }
+        set {
+            let raw = newValue.map { [$0.elapsedSeconds, $0.bpm] }
+            heartRateTimelineData = try? JSONEncoder().encode(raw)
+        }
     }
 }
