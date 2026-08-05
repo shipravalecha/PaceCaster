@@ -160,7 +160,11 @@ struct WeeklyRecapView: View {
         let lastWeekDistance = lastWeekRuns.reduce(0) { $0 + ($1.distanceMeters ?? 0) }
 
         guard lastWeekDistance > 0 else {
-            return thisWeekRuns.isEmpty ? "No runs logged this week." : "Nice work - keep the momentum going next week."
+            if thisWeekRuns.isEmpty {
+                return "No runs logged this week."
+            } else {
+                return "No runs logged last week, so there's nothing to compare yet."
+            }
         }
         let percentChange = ((thisWeekDistance - lastWeekDistance) / lastWeekDistance) * 100
         if abs(percentChange) < 5 {

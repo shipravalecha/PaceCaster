@@ -136,7 +136,7 @@ struct RunScoreDetailView: View {
                 outOf: 50,
                 color: .green,
                 stat: aerobicStat(for: run),
-                explanation: "Aerobic means a steady, sustainable effort - roughly below 80% of your max heart rate. Tempo is a harder but still controlled effort - around 80-90% of your max. Anaerobic is a near-maximum push that can't be sustained long, it is when your heart rate is over 90% of your max. More aerobic time means your body was working efficiently rather than straining. Aerobic is a great thing, as it helps build endurance. Tempo is great, as it helps build strength. And anaerobic is bad, as it can lead to injury"
+                explanation: "Aerobic means a steady, sustainable effort - roughly below 80% of your max heart rate. Tempo is a harder but still controlled effort - around 80-90% of your max. Anaerobic is a near-maximum push that can't be sustained long, it is when your heart rate is over 90% of your max. More aerobic time means your body was working efficiently rather than straining. Aerobic is a great thing, as it helps build endurance. Tempo is great, as it helps build strength. And anaerobic is bad, as it can lead to injury."
             )
             Divider()
             factorDetail(
