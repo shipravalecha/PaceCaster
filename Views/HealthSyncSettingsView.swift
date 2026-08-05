@@ -170,6 +170,9 @@ struct HealthSyncSettingsView: View {
                 Button("Seed Milestone-Beating Run") {
                     DebugSeeder.seedMilestoneBeatingRun(into: modelContext)
                 }
+                Button("Seed Training Load Spike") {
+                    DebugSeeder.seedTrainingLoadSpike(into: modelContext)
+                }
             }
             #endif
             

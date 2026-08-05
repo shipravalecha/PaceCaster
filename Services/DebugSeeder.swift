@@ -161,5 +161,49 @@ enum DebugSeeder {
 
         MilestoneChecker.rebuildAllMilestones(modelContext: modelContext, notifyForRunUUID: run.healthKitUUID)
     }
+    
+    static func seedTrainingLoadSpike(into modelContext: ModelContext) {
+        let calendar = Calendar.current
+        let now = Date()
+
+        func makeRun(daysAgo: Int, distanceMiles: Double) -> RunWorkout {
+            let date = calendar.date(byAdding: .day, value: -daysAgo, to: now)!
+            let distanceMeters = distanceMiles * 1609.344
+            let paceSecPerMile: Double = 550 // ~9:10/mi
+            let duration = distanceMiles * paceSecPerMile
+            let avgHR: Double = 150
+
+            let run = RunWorkout(
+                healthKitUUID: UUID(),
+                startDate: date,
+                durationSeconds: duration,
+                distanceMeters: distanceMeters,
+                averageHeartRate: avgHR,
+                heartRateSampleCount: 30
+            )
+            if run.isSteadyState, let speed = run.averageSpeedMetersPerSecond {
+                run.efficiencyFactor = EfficiencyCalculator.computeEF(averageSpeedMetersPerSecond: speed, averageHeartRateBPM: avgHR)
+            }
+            return run
+        }
+
+        var runs: [RunWorkout] = []
+
+        // Weeks 4-2 ago (chronic baseline): ~10 miles/week, 3 runs each.
+        for week in [27, 26, 25, 20, 19, 18, 13, 12, 11] {
+            runs.append(makeRun(daysAgo: week, distanceMiles: 3.3))
+        }
+
+        // Most recent 7 days (acute window): a deliberate spike, ~20 miles total.
+        runs.append(makeRun(daysAgo: 6, distanceMiles: 5.0))
+        runs.append(makeRun(daysAgo: 4, distanceMiles: 6.0))
+        runs.append(makeRun(daysAgo: 2, distanceMiles: 5.0))
+        runs.append(makeRun(daysAgo: 1, distanceMiles: 4.0))
+
+        for run in runs {
+            modelContext.insert(run)
+        }
+        try? modelContext.save()
+    }
 }
 #endif
