@@ -21,7 +21,7 @@ struct WelcomeView: View {
                 .foregroundStyle(.tint)
             Text("PaceCaster")
                 .font(.largeTitle.bold())
-            Text("Pure running metrics. No noise, no social feed — just your own aerobic data, turned into honest race predictions.")
+            Text("Pure running metrics. No noise, no social feed - just your own aerobic data, turned into honest race predictions.")
                 .multilineTextAlignment(.center)
                 .foregroundStyle(.secondary)
                 .padding(.horizontal, 32)

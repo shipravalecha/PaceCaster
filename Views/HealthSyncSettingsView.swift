@@ -26,7 +26,7 @@ struct HealthSyncSettingsView: View {
         Form {
             
             Section("HealthKit Access") {
-                Text("PaceCaster reads Workouts, Heart Rate, and Running Distance. iOS doesn't let apps check exact read-permission status — you can review or change exactly what's shared in the Health app.")
+                Text("PaceCaster reads Workouts, Heart Rate, and Running Distance. iOS doesn't let apps check exact read-permission status - you can review or change exactly what's shared in the Health app.")
                     .font(.footnote)
                     .foregroundStyle(.secondary)
 

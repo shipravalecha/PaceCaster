@@ -72,12 +72,12 @@ final class NotificationManager: NSObject, ObservableObject {
     private func milestoneBody(for type: MilestoneType, value: Double) -> String {
         switch type {
         case .bestEF:
-            return String(format: "Your Aerobic Baseline just hit %.2f — your best yet.", value)
+            return String(format: "Your Aerobic Baseline just hit %.2f - your best yet.", value)
         case .bestRunScore:
-            return "You just posted a Run Score of \(Int(value)) — your highest yet."
+            return "You just posted a Run Score of \(Int(value)) - your highest yet."
         case .longestRun:
             let miles = value / 1609.344
-            return String(format: "You just ran %.1f miles — your longest run yet.", miles)
+            return String(format: "You just ran %.1f miles - your longest run yet.", miles)
         }
     }
 
@@ -113,7 +113,7 @@ final class NotificationManager: NSObject, ObservableObject {
                 content.body = "Good luck on your \(raceLabel) today."
             } else {
                 content.title = "🏁 \(daysRemaining) day\(daysRemaining == 1 ? "" : "s") to your \(raceLabel)"
-                content.body = "Your training block is almost done — stay sharp."
+                content.body = "Your training block is almost done - stay sharp."
             }
             content.sound = .default
 

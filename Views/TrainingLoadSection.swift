@@ -37,7 +37,7 @@ struct TrainingLoadSection: View {
                 .padding()
                 .background(.thinMaterial, in: RoundedRectangle(cornerRadius: 16))
             } else {
-                Text("Keep logging runs — we need about 3 weeks of history to gauge your training load.")
+                Text("Keep logging runs - we need about 3 weeks of history to gauge your training load.")
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
                     .frame(maxWidth: .infinity, minHeight: 60)
@@ -55,14 +55,14 @@ struct TrainingLoadSection: View {
     private func message(for status: TrainingLoadStatus, ratio: Double) -> String {
         switch status {
         case .low:
-            return "Your mileage this week is lower than your recent average. That's fine — just worth noting if it wasn't planned."
+            return "Your mileage this week is lower than your recent average. That's fine - just worth noting if it wasn't planned."
         case .normal:
             return "Your training load is in a sustainable range compared to your recent average."
         case .elevated:
             return "Your mileage this week is higher than your recent average. Keep an eye on how your body responds."
         case .high:
             let percent = Int((ratio - 1) * 100)
-            return "Your mileage this week is \(percent)% higher than your recent average. This kind of jump is linked to higher injury risk — consider easing up slightly."
+            return "Your mileage this week is \(percent)% higher than your recent average. This kind of jump is linked to higher injury risk - consider easing up slightly."
         }
     }
 }
