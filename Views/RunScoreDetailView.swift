@@ -11,6 +11,8 @@ struct RunScoreDetailView: View {
     let scoredRuns: [RunWorkout]
     @EnvironmentObject private var settings: AppSettings
     @State private var selectedIndex: Int = 0
+    @State private var showRoute = false
+    @State private var showSplits = false
 
     @Environment(\.dismiss) private var dismiss
     
@@ -62,6 +64,16 @@ struct RunScoreDetailView: View {
         }
         .navigationTitle("Run Score")
         .navigationBarTitleDisplayMode(.inline)
+        .navigationDestination(isPresented: $showSplits) {
+            if let run = displayedRun {
+                RunSplitsView(run: run)
+            }
+        }
+        .navigationDestination(isPresented: $showRoute) {
+            if let run = displayedRun {
+                RunRouteView(run: run)
+            }
+        }
     }
 
     // MARK: - Header
@@ -112,6 +124,23 @@ struct RunScoreDetailView: View {
                 Text(run.startDate.formatted(date: .abbreviated, time: .omitted))
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
+                
+                if let run = displayedRun {
+                    HStack(spacing: 16) {
+                        Button("View Splits") {
+                            showSplits = true
+                        }
+                        .font(.caption.weight(.medium))
+
+                        if !run.routeCoordinates.isEmpty {
+                            Button("View Route") {
+                                showRoute = true
+                            }
+                            .font(.caption.weight(.medium))
+                        }
+                    }
+                    .padding(.top, 4)
+                }
             }
 
             Button {
