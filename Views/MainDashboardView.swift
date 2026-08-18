@@ -13,6 +13,7 @@ struct MainDashboardView: View {
     @StateObject private var viewModel = DashboardViewModel()
     @State private var showBaselineInfo = false
     @State private var showSplits = false
+    @State private var showRoute = false
     
     var body: some View {
         NavigationStack {
@@ -33,6 +34,11 @@ struct MainDashboardView: View {
                 .navigationDestination(isPresented: $showSplits) {
                     if let run = viewModel.latestRun {
                         RunSplitsView(run: run)
+                    }
+                }
+                .navigationDestination(isPresented: $showRoute) {
+                    if let run = viewModel.latestRun {
+                        RunRouteView(run: run)
                     }
                 }
             }
@@ -116,8 +122,9 @@ struct MainDashboardView: View {
                 }
                 
                 if viewModel.latestRun != nil {
-                    Button("View Splits") {
-                        showSplits = true
+                    HStack(spacing: 16) {
+                        Button("View Splits") { showSplits = true }
+                        Button("View Route") { showRoute = true }
                     }
                     .font(.caption.weight(.medium))
                 }

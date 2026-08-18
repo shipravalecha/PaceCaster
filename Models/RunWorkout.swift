@@ -7,6 +7,7 @@
 
 import Foundation
 import SwiftData
+import CoreLocation
 
 @Model
 final class RunWorkout {
@@ -27,6 +28,7 @@ final class RunWorkout {
     var effortSpikeCount: Int?
     var distanceTimelineData: Data?
     var heartRateTimelineData: Data?
+    var routeCoordinatesData: Data?
 
     init(healthKitUUID: UUID,
          startDate: Date,
@@ -81,6 +83,21 @@ final class RunWorkout {
         set {
             let raw = newValue.map { [$0.elapsedSeconds, $0.bpm] }
             heartRateTimelineData = try? JSONEncoder().encode(raw)
+        }
+    }
+    
+    var routeCoordinates: [CLLocationCoordinate2D] {
+        get {
+            guard let data = routeCoordinatesData,
+                  let raw = try? JSONDecoder().decode([[Double]].self, from: data) else { return [] }
+            return raw.compactMap { pair in
+                guard pair.count == 2 else { return nil }
+                return CLLocationCoordinate2D(latitude: pair[0], longitude: pair[1])
+            }
+        }
+        set {
+            let raw = newValue.map { [$0.latitude, $0.longitude] }
+            routeCoordinatesData = try? JSONEncoder().encode(raw)
         }
     }
 }

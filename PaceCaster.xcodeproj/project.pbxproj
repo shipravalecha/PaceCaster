@@ -35,6 +35,7 @@
 		018518783022B78B0005B85D /* TrainingLoadCalculator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 018518773022B7890005B85D /* TrainingLoadCalculator.swift */; };
 		0185187A3022B79C0005B85D /* TrainingLoadSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 018518793022B79A0005B85D /* TrainingLoadSection.swift */; };
 		0185187C3023EF6E0005B85D /* SplitExplainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0185187B3023EF6D0005B85D /* SplitExplainerView.swift */; };
+		0185187E3033B6700005B85D /* RunRouteView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0185187D3033B66F0005B85D /* RunRouteView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -67,6 +68,7 @@
 		018518773022B7890005B85D /* TrainingLoadCalculator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrainingLoadCalculator.swift; sourceTree = "<group>"; };
 		018518793022B79A0005B85D /* TrainingLoadSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrainingLoadSection.swift; sourceTree = "<group>"; };
 		0185187B3023EF6D0005B85D /* SplitExplainerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplitExplainerView.swift; sourceTree = "<group>"; };
+		0185187D3033B66F0005B85D /* RunRouteView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RunRouteView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -152,6 +154,7 @@
 		0185183E300044C10005B85D /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				0185187D3033B66F0005B85D /* RunRouteView.swift */,
 				0185187B3023EF6D0005B85D /* SplitExplainerView.swift */,
 				018518793022B79A0005B85D /* TrainingLoadSection.swift */,
 				0185187530216EEA0005B85D /* RunSplitsView.swift */,
@@ -247,6 +250,7 @@
 				01851857300054F50005B85D /* HealthSyncSettingsView.swift in Sources */,
 				01851851300054D70005B85D /* HealthKitManager.swift in Sources */,
 				0185187A3022B79C0005B85D /* TrainingLoadSection.swift in Sources */,
+				0185187E3033B6700005B85D /* RunRouteView.swift in Sources */,
 				01851852300054DB0005B85D /* DashboardViewModel.swift in Sources */,
 				0185184F300054CF0005B85D /* PredictionEngine.swift in Sources */,
 				0185187C3023EF6E0005B85D /* SplitExplainerView.swift in Sources */,

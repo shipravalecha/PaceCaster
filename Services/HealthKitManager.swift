@@ -8,6 +8,7 @@
 import Foundation
 import HealthKit
 import Combine
+import CoreLocation
 
 enum HealthKitError: Error {
     case notARunningWorkout
@@ -28,8 +29,13 @@ final class HealthKitManager: ObservableObject {
 
     var isHealthDataAvailable: Bool { HKHealthStore.isHealthDataAvailable() }
 
+//    func requestAuthorization() async throws {
+//        let readTypes: Set<HKObjectType> = [workoutType, heartRateType, distanceType, HKSeriesType.workoutRoute()]
+//        try await healthStore.requestAuthorization(toShare: [], read: readTypes)
+//        authorizationGranted = true
+//    }
     func requestAuthorization() async throws {
-        let readTypes: Set<HKObjectType> = [workoutType, heartRateType, distanceType]
+        let readTypes: Set<HKObjectType> = [workoutType, heartRateType, distanceType, HKSeriesType.workoutRoute()]
         try await healthStore.requestAuthorization(toShare: [], read: readTypes)
         authorizationGranted = true
     }
@@ -97,6 +103,13 @@ final class HealthKitManager: ObservableObject {
         if run.isSteadyState, let speed = run.averageSpeedMetersPerSecond, let hr = avgHR {
             run.efficiencyFactor = EfficiencyCalculator.computeEF(averageSpeedMetersPerSecond: speed, averageHeartRateBPM: hr)
         }
+        var rawRoute: [CLLocationCoordinate2D] = []
+        do {
+            rawRoute = try await fetchRoute(for: workout)
+        } catch {
+            print("Route fetch FAILED for \(workout.startDate): \(error)")
+        }
+        run.routeCoordinates = downsample(rawRoute)
         
         let sortedDistSamples = distSamples.sorted { $0.date < $1.date }
         var cumulative: Double = 0
@@ -191,5 +204,55 @@ final class HealthKitManager: ObservableObject {
         }
         healthStore.execute(query)
         healthStore.enableBackgroundDelivery(for: workoutType, frequency: .immediate) { _, _ in }
+    }
+    
+    private func fetchRoute(for workout: HKWorkout) async throws -> [CLLocationCoordinate2D] {
+        let routeType = HKSeriesType.workoutRoute()
+        let predicate = HKQuery.predicateForObjects(from: workout)
+
+        let routes: [HKWorkoutRoute] = try await withCheckedThrowingContinuation { continuation in
+            let query = HKSampleQuery(sampleType: routeType, predicate: predicate, limit: 1, sortDescriptors: nil) { _, samples, error in
+                if let error {
+                    continuation.resume(throwing: error)
+                    return
+                }
+                continuation.resume(returning: (samples as? [HKWorkoutRoute]) ?? [])
+            }
+            healthStore.execute(query)
+        }
+
+        guard let route = routes.first else { return [] }
+
+        var allLocations: [CLLocation] = []
+        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+            let routeQuery = HKWorkoutRouteQuery(route: route) { _, locations, done, error in
+                if let error {
+                    continuation.resume(throwing: error)
+                    return
+                }
+                if let locations {
+                    allLocations.append(contentsOf: locations)
+                }
+                if done {
+                    continuation.resume(returning: ())
+                }
+            }
+            healthStore.execute(routeQuery)
+        }
+
+        return allLocations.map { $0.coordinate }
+    }
+
+    /// GPS routes can have thousands of points - downsample for storage and rendering.
+    private func downsample(_ coordinates: [CLLocationCoordinate2D], maxPoints: Int = 300) -> [CLLocationCoordinate2D] {
+        guard coordinates.count > maxPoints else { return coordinates }
+        let stride = Double(coordinates.count) / Double(maxPoints)
+        var result: [CLLocationCoordinate2D] = []
+        var index: Double = 0
+        while Int(index) < coordinates.count {
+            result.append(coordinates[Int(index)])
+            index += stride
+        }
+        return result
     }
 }
