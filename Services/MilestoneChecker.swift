@@ -19,6 +19,7 @@ enum MilestoneChecker {
 
         let descriptor = FetchDescriptor<RunWorkout>(sortBy: [SortDescriptor(\.startDate, order: .forward)])
         let chronological = (try? modelContext.fetch(descriptor)) ?? []
+        let maxHR = AppSettings.shared.maxHeartRate
 
         var bestEF: Double = 0
         var bestScore: Int = 0
@@ -33,7 +34,8 @@ enum MilestoneChecker {
                 }
                 bestEF = max(bestEF, ef)
             }
-            if let score = run.runScore {
+            if let result = RunScoreCalculator.compute(for: run, maxHeartRate: maxHR) {
+                let score = result.totalScore
                 if score > bestScore + scoreImprovementThreshold {
                     upsert(.bestRunScore, value: Double(score), run: run, modelContext: modelContext,
                            notify: run.healthKitUUID == notifyForRunUUID, lastInserted: &lastInserted)

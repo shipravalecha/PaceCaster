@@ -161,3 +161,31 @@ enum RunScoreCalculator {
         return min(30, points)
     }
 }
+extension RunScoreCalculator {
+    /// Always computes fresh from a run's raw timelines and the given Max Heart
+    /// Rate — never trust a previously stored score, since it can go stale the
+    /// moment Max Heart Rate changes.
+    static func compute(for run: RunWorkout, maxHeartRate: Int) -> RunScoreResult? {
+        let hrSamples = run.heartRateTimeline.map {
+            (date: run.startDate.addingTimeInterval($0.elapsedSeconds), bpm: $0.bpm)
+        }
+
+        let distSamples = run.distanceTimeline.enumerated().map { index, point -> (date: Date, endDate: Date, meters: Double) in
+            let date = run.startDate.addingTimeInterval(point.elapsedSeconds)
+            // Distance samples in the score calculator represent an interval
+            // (date...endDate) with an incremental meters value — approximate
+            // each stored cumulative point as a short interval ending at the
+            // next point (or a small fixed window for the last point).
+            let nextElapsed = index + 1 < run.distanceTimeline.count
+                ? run.distanceTimeline[index + 1].elapsedSeconds
+                : point.elapsedSeconds + 1
+            let endDate = run.startDate.addingTimeInterval(nextElapsed)
+            let incrementalMeters = index > 0
+                ? point.cumulativeMeters - run.distanceTimeline[index - 1].cumulativeMeters
+                : point.cumulativeMeters
+            return (date: date, endDate: endDate, meters: incrementalMeters)
+        }
+
+        return compute(heartRateSamples: hrSamples, distanceSamples: distSamples, maxHeartRate: maxHeartRate)
+    }
+}

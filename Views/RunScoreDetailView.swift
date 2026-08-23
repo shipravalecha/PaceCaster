@@ -21,6 +21,11 @@ struct RunScoreDetailView: View {
         return scoredRuns[selectedIndex]
     }
     
+    private var displayedResult: RunScoreResult? {
+        guard let run = displayedRun else { return nil }
+        return RunScoreCalculator.compute(for: run, maxHeartRate: settings.maxHeartRate)
+    }
+    
     private var canGoOlder: Bool { selectedIndex < scoredRuns.count - 1 }
     private var canGoNewer: Bool { selectedIndex > 0 }
 
@@ -38,10 +43,10 @@ struct RunScoreDetailView: View {
         ScrollViewReader { proxy in
             ScrollView {
                 VStack(spacing: 28) {
-                    if let run = displayedRun {
+                    if let run = displayedRun, let result = displayedResult {
                         scoreHeader(for: run)
-                            .id("top")   // ← anchor point to scroll to
-                        factorBreakdown(for: run)
+                            .id("top")
+                        factorBreakdown(for: result)
                     }
 
                     if settings.maxHRIsEstimated {
@@ -93,12 +98,12 @@ struct RunScoreDetailView: View {
                 ZStack {
                     Circle().stroke(Color.secondary.opacity(0.2), lineWidth: 10)
                     Circle()
-                        .trim(from: 0, to: CGFloat(run.runScore ?? 0) / 100)
-                        .stroke(scoreColor(run.runScore ?? 0), style: StrokeStyle(lineWidth: 10, lineCap: .round))
+                        .trim(from: 0, to: CGFloat(displayedResult?.totalScore ?? 0) / 100)
+                        .stroke(scoreColor(displayedResult?.totalScore ?? 0), style: StrokeStyle(lineWidth: 10, lineCap: .round))
                         .rotationEffect(.degrees(-90))
                     VStack(spacing: 2) {
-                        Text("\(run.runScore ?? 0)").font(.system(size: 32, weight: .bold, design: .rounded))
-                        Text(RunScoreLabel.forScore(run.runScore ?? 0).rawValue)
+                        Text("\(displayedResult?.totalScore ?? 0)").font(.system(size: 32, weight: .bold, design: .rounded))
+                        Text(RunScoreLabel.forScore(displayedResult?.totalScore ?? 0).rawValue)
                             .font(.caption)
                             .foregroundStyle(.secondary)
                     }
@@ -110,8 +115,6 @@ struct RunScoreDetailView: View {
                         .onEnded { value in
                             let horizontal = value.translation.width
                             let vertical = value.translation.height
-                            // Only treat as a swipe if it's clearly more horizontal than vertical —
-                            // this keeps it from fighting the ScrollView's vertical scroll gesture.
                             guard abs(horizontal) > abs(vertical) * 1.5 else { return }
                             if horizontal < 0 {
                                 goOlder()
@@ -125,7 +128,6 @@ struct RunScoreDetailView: View {
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
                 
-                if let run = displayedRun {
                     HStack(spacing: 16) {
                         Button("View Splits") {
                             showSplits = true
@@ -140,7 +142,7 @@ struct RunScoreDetailView: View {
                         }
                     }
                     .padding(.top, 4)
-                }
+
             }
 
             Button {
@@ -157,32 +159,32 @@ struct RunScoreDetailView: View {
 
     // MARK: - Factor breakdown
 
-    private func factorBreakdown(for run: RunWorkout) -> some View {
+    private func factorBreakdown(for result: RunScoreResult) -> some View {
         VStack(alignment: .leading, spacing: 20) {
             factorDetail(
                 title: "Aerobic Time",
-                points: run.aerobicTimePoints ?? 0,
+                points: displayedResult?.aerobicTimePoints ?? 0,
                 outOf: 50,
                 color: .green,
-                stat: aerobicStat(for: run),
+                stat: aerobicStat(for: result),
                 explanation: "Aerobic means a steady, sustainable effort - roughly below 80% of your max heart rate. Tempo is a harder but still controlled effort - around 80-90% of your max. Anaerobic is a near-maximum push that can't be sustained long, it is when your heart rate is over 90% of your max. More aerobic time means your body was working efficiently rather than straining. Aerobic is a great thing, as it helps build endurance. Tempo is great, as it helps build strength. And anaerobic is bad, as it can lead to injury."
             )
             Divider()
             factorDetail(
                 title: "Pacing Control",
-                points: run.pacingControlPoints ?? 0,
+                points: displayedResult?.pacingControlPoints ?? 0,
                 outOf: 30,
                 color: .blue,
-                stat: pacingStat(for: run),
+                stat: pacingStat(for: result),
                 explanation: "Looks at how consistent your effort stayed from start to finish. Starting too fast and fading, or surging on and off, lowers this score. Steady effort throughout scores higher."
             )
             Divider()
             factorDetail(
                 title: "Effort Spikes",
-                points: run.effortSpikePoints ?? 0,
+                points: displayedResult?.effortSpikePoints ?? 0,
                 outOf: 20,
                 color: .orange,
-                stat: spikeStat(for: run),
+                stat: spikeStat(for: result),
                 explanation: "Counts how many separate times your heart rate crossed into a hard, near-maximum zone during the run - not how long you spent there. One sustained hard push counts as a single spike; several short hard bursts count as multiple. Fewer spikes means steadier, more controlled effort, which is why more points here is better even though \"spikes\" sounds like a bad thing."
             )
         }
@@ -208,23 +210,21 @@ struct RunScoreDetailView: View {
         }
     }
 
-    private func aerobicStat(for run: RunWorkout) -> String {
-        guard let aerobic = run.aerobicPercent else { return "Not enough data for this run." }
-        let tempo = run.tempoPercent ?? 0
-        let anaerobic = run.anaerobicPercent ?? 0
-        return String(format: "%.0f%% aerobic · %.0f%% tempo · %.0f%% anaerobic", aerobic, tempo, anaerobic)
+    private func aerobicStat(for result: RunScoreResult) -> String {
+        String(format: "%.0f%% aerobic · %.0f%% tempo · %.0f%% anaerobic",
+                       result.aerobicPercent, result.tempoPercent, result.anaerobicPercent)
     }
 
-    private func pacingStat(for run: RunWorkout) -> String {
-        switch run.pacingControlPoints ?? 0 {
-        case 24...30: return "Your effort stayed very steady throughout."
-        case 12..<24: return "Your effort had some ups and downs."
-        default: return "Your effort varied significantly during this run."
+    private func pacingStat(for result: RunScoreResult) -> String {
+        switch result.pacingControlPoints {
+            case 24...30: return "Your effort stayed very steady throughout."
+            case 12..<24: return "Your effort had some ups and downs."
+            default: return "Your effort varied significantly during this run."
         }
     }
 
-    private func spikeStat(for run: RunWorkout) -> String {
-        let count = run.effortSpikeCount ?? 0
+    private func spikeStat(for result: RunScoreResult) -> String {
+        let count = result.spikeCount
         if count == 0 { return "No hard effort spikes detected." }
         return count == 1 ? "1 hard effort spike detected." : "\(count) hard effort spikes detected."
     }
@@ -296,7 +296,8 @@ struct RunScoreDetailView: View {
     }
 
     private func historyRow(for run: RunWorkout) -> some View {
-        HStack {
+        let score = RunScoreCalculator.compute(for: run, maxHeartRate: settings.maxHeartRate)?.totalScore ?? 0
+        return HStack {
             VStack(alignment: .leading, spacing: 2) {
                 Text(run.startDate.formatted(date: .abbreviated, time: .omitted))
                     .font(.subheadline.weight(.medium))
@@ -307,13 +308,13 @@ struct RunScoreDetailView: View {
                 }
             }
             Spacer()
-            Text("\(run.runScore ?? 0)")
+            Text("\(score)")
                 .font(.subheadline.weight(.bold))
-                .foregroundStyle(scoreColor(run.runScore ?? 0))
+                .foregroundStyle(scoreColor(score))
         }
         .padding()
         .background(run.healthKitUUID == displayedRun?.healthKitUUID ? Color.secondary.opacity(0.08) : Color.clear)
-        .contentShape(Rectangle())   // ← makes the entire row (including empty space) tappable
+        .contentShape(Rectangle())
     }
 
     private func scoreColor(_ score: Int) -> Color {

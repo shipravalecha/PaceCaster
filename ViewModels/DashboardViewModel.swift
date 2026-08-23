@@ -63,7 +63,9 @@ final class DashboardViewModel: ObservableObject {
         isLoading = true
         let descriptor = FetchDescriptor<RunWorkout>(sortBy: [SortDescriptor(\.startDate, order: .reverse)])
         allWorkouts = (try? modelContext.fetch(descriptor)) ?? []
-        scoredRuns = allWorkouts.filter { $0.runScore != nil }.sorted { $0.startDate > $1.startDate }
+        scoredRuns = allWorkouts
+            .filter { RunScoreCalculator.compute(for: $0, maxHeartRate: settings.maxHeartRate) != nil }
+            .sorted { $0.startDate > $1.startDate }
 
         // Baseline: most recent QUALIFYING run
         let baseline = EfficiencyCalculator.latestBaseline(allWorkouts)
@@ -118,13 +120,12 @@ final class DashboardViewModel: ObservableObject {
             latestRunHRDisplay = "--"
         }
         
-        if let mostRecent, let score = mostRecent.runScore {
-            runScore = score
-            runScoreLabel = RunScoreLabel.forScore(score).rawValue
-            aerobicTimePoints = mostRecent.aerobicTimePoints
-            pacingControlPoints = mostRecent.pacingControlPoints
-            effortSpikePoints = mostRecent.effortSpikePoints
-            effortSpikeCount = mostRecent.effortSpikeCount
+        if let mostRecent, let result = RunScoreCalculator.compute(for: mostRecent, maxHeartRate: settings.maxHeartRate) {
+            runScore = result.totalScore
+            runScoreLabel = RunScoreLabel.forScore(result.totalScore).rawValue
+            aerobicTimePoints = result.aerobicTimePoints
+            pacingControlPoints = result.pacingControlPoints
+            effortSpikePoints = result.effortSpikePoints
         } else {
             runScore = nil
             runScoreLabel = nil

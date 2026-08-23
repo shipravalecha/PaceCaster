@@ -52,6 +52,10 @@ final class AppSettings: ObservableObject {
     @Published var goalRaceDate: Date? {
         didSet { persistGoalRace() }
     }
+    
+    @Published var hasCompletedMaxHRSetup: Bool {
+        didSet { UserDefaults.standard.set(hasCompletedMaxHRSetup, forKey: Keys.hasCompletedMaxHRSetup) }
+    }
 
     private enum Keys {
         static let unit = "measurementUnit"
@@ -62,10 +66,12 @@ final class AppSettings: ObservableObject {
         static let weeklyRecapEnabled = "weeklyRecapEnabled"
         static let goalRaceDistance = "goalRaceDistance"
         static let goalRaceDate = "goalRaceDate"
+        static let hasCompletedMaxHRSetup = "hasCompletedMaxHRSetup"
     }
 
     private init() {
         weeklyRecapEnabled = UserDefaults.standard.bool(forKey: Keys.weeklyRecapEnabled)
+        hasCompletedMaxHRSetup = UserDefaults.standard.bool(forKey: Keys.hasCompletedMaxHRSetup)
         if let saved = UserDefaults.standard.string(forKey: Keys.unit),
            let unit = MeasurementUnit(rawValue: saved) {
             measurementUnit = unit

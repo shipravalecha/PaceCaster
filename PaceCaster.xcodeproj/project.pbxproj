@@ -36,6 +36,7 @@
 		0185187A3022B79C0005B85D /* TrainingLoadSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 018518793022B79A0005B85D /* TrainingLoadSection.swift */; };
 		0185187C3023EF6E0005B85D /* SplitExplainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0185187B3023EF6D0005B85D /* SplitExplainerView.swift */; };
 		0185187E3033B6700005B85D /* RunRouteView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0185187D3033B66F0005B85D /* RunRouteView.swift */; };
+		018518803039020B0005B85D /* MaxHRSetupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0185187F3039020A0005B85D /* MaxHRSetupView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -69,6 +70,7 @@
 		018518793022B79A0005B85D /* TrainingLoadSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrainingLoadSection.swift; sourceTree = "<group>"; };
 		0185187B3023EF6D0005B85D /* SplitExplainerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplitExplainerView.swift; sourceTree = "<group>"; };
 		0185187D3033B66F0005B85D /* RunRouteView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RunRouteView.swift; sourceTree = "<group>"; };
+		0185187F3039020A0005B85D /* MaxHRSetupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MaxHRSetupView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -154,6 +156,7 @@
 		0185183E300044C10005B85D /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				0185187F3039020A0005B85D /* MaxHRSetupView.swift */,
 				0185187D3033B66F0005B85D /* RunRouteView.swift */,
 				0185187B3023EF6D0005B85D /* SplitExplainerView.swift */,
 				018518793022B79A0005B85D /* TrainingLoadSection.swift */,
@@ -262,6 +265,7 @@
 				01851856300054F10005B85D /* MetricsAnalyticsView.swift in Sources */,
 				0185184E300054CA0005B85D /* AppSettings.swift in Sources */,
 				01851860300802FF0005B85D /* BaselineExplainerView.swift in Sources */,
+				018518803039020B0005B85D /* MaxHRSetupView.swift in Sources */,
 				0185184D300054BE0005B85D /* RunWorkout.swift in Sources */,
 				018518783022B78B0005B85D /* TrainingLoadCalculator.swift in Sources */,
 				0185186630116FE50005B85D /* NotificationManager.swift in Sources */,

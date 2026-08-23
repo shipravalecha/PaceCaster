@@ -21,6 +21,10 @@ struct RootView: View {
             if settings.hasCompletedOnboarding || didFinishSetup {
                 if isScanning {
                     scanningView
+                } else if !settings.hasCompletedMaxHRSetup {
+                    MaxHRSetupView {
+                        // no-op; hasCompletedMaxHRSetup flip triggers re-render below
+                    }
                 } else {
                     MainDashboardView()
                 }
