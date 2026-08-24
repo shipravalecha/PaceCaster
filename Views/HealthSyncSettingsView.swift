@@ -21,10 +21,13 @@ struct HealthSyncSettingsView: View {
     @EnvironmentObject private var notificationManager: NotificationManager
     @State private var isRequestingPermission = false
     @State private var settingsScreenReady = false
+    @State private var isSyncing = false
+    @State private var isDeleting = false
+    @State private var statusMessage: String?
+    @State private var statusIsError = false
 
     var body: some View {
         Form {
-            
             Section("HealthKit Access") {
                 Text("PaceCaster reads Workouts, Heart Rate, and Running Distance. iOS doesn't let apps check exact read-permission status - you can review or change exactly what's shared in the Health app.")
                     .font(.footnote)
@@ -46,16 +49,36 @@ struct HealthSyncSettingsView: View {
                 }
             }
             
-            Button("Sync Now") {
+            Button {
                 Task {
+                    isSyncing = true
+                    statusMessage = nil
                     let workouts = (try? await healthKitManager.scanLast90Days()) ?? []
+                    var newCount = 0
                     for workout in workouts {
-                        WorkoutSyncHelper.insertIfNew(workout, modelContext: modelContext)
+                        if WorkoutSyncHelper.insertIfNew(workout, modelContext: modelContext) {
+                            newCount += 1
+                        }
                     }
                     settings.lastSyncedAt = Date()
                     MilestoneChecker.rebuildAllMilestones(modelContext: modelContext, notifyForRunUUID: nil)
+                    RunScoreRecalculator.recalculateAll(modelContext: modelContext, maxHeartRate: settings.maxHeartRate)
+
+                    isSyncing = false
+                    statusIsError = false
+                    statusMessage = newCount > 0 ? "✓ Synced \(newCount) new run\(newCount == 1 ? "" : "s")" : "✓ Already up to date"
+                    scheduleStatusDismiss()
+                }
+            } label: {
+                HStack {
+                    Text("Sync Now")
+                    if isSyncing {
+                        Spacer()
+                        ProgressView()
+                    }
                 }
             }
+            .disabled(isSyncing)
 
             Section("Units") {
                 Picker("Measurement Unit", selection: $settings.measurementUnit) {
@@ -153,6 +176,7 @@ struct HealthSyncSettingsView: View {
             } footer: {
                 Text("Permanently deletes all stored running workouts and computed efficiency data from this device. This cannot be undone.")
             }
+            
             #if DEBUG
             Section("Debug") {
                 Button("Seed Test Data") {
@@ -208,8 +232,6 @@ struct HealthSyncSettingsView: View {
         
         .scrollDismissesKeyboard(.immediately)
         .onDisappear {
-            // Guaranteed fallback: commits "manually confirmed" the moment this
-            // screen is left, regardless of how — back button, swipe, or tab switch.
             if maxHRFieldFocused {
                 settings.maxHRIsEstimated = false
             }
@@ -237,6 +259,14 @@ struct HealthSyncSettingsView: View {
         } message: {
             Text("We'll estimate your max heart rate using your age.")
         }
+        if let statusMessage {
+            Text(statusMessage)
+                .font(.footnote.weight(.medium))
+                .foregroundStyle(statusIsError ? .red : .green)
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 8)
+                .transition(.opacity)
+        }
     }
     
     private var lastSyncedDisplay: String {
@@ -245,12 +275,27 @@ struct HealthSyncSettingsView: View {
     }
 
     private func flushDatabase() {
+        isDeleting = true
         do {
             try modelContext.delete(model: RunWorkout.self)
             try modelContext.delete(model: Milestone.self)
             try modelContext.save()
+            statusIsError = false
+            statusMessage = "✓ All data deleted"
         } catch {
-            flushError = "Something went wrong while deleting your data. Your existing data has been kept."
+            statusIsError = true
+            statusMessage = "Something went wrong while deleting your data."
+        }
+        isDeleting = false
+        scheduleStatusDismiss()
+    }
+    
+    private func scheduleStatusDismiss() {
+        Task {
+            try? await Task.sleep(nanoseconds: 3_000_000_000)
+            withAnimation {
+                statusMessage = nil
+            }
         }
     }
 }
