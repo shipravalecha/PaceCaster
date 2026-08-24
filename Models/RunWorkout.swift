@@ -29,6 +29,9 @@ final class RunWorkout {
     var distanceTimelineData: Data?
     var heartRateTimelineData: Data?
     var routeCoordinatesData: Data?
+    var scoreComputedForMaxHR: Int?
+    var scoreHRData: Data?
+    var scoreDistData: Data?
 
     init(healthKitUUID: UUID,
          startDate: Date,
@@ -46,7 +49,6 @@ final class RunWorkout {
         self.efficiencyFactor = efficiencyFactor
     }
 
-    /// Req 4.1 / 4.3: duration > 20 min AND at least 10 HR samples
     var isSteadyState: Bool {
         durationSeconds > 1200 && heartRateSampleCount >= 10 && averageHeartRate != nil && distanceMeters != nil
     }
@@ -98,6 +100,30 @@ final class RunWorkout {
         set {
             let raw = newValue.map { [$0.latitude, $0.longitude] }
             routeCoordinatesData = try? JSONEncoder().encode(raw)
+        }
+    }
+    
+    var scoreHeartRateSamples: [(date: Date, bpm: Double)] {
+        get {
+            guard let data = scoreHRData,
+                  let raw = try? JSONDecoder().decode([[Double]].self, from: data) else { return [] }
+            return raw.compactMap { $0.count == 2 ? (Date(timeIntervalSince1970: $0[0]), $0[1]) : nil }
+        }
+        set {
+            let raw = newValue.map { [$0.date.timeIntervalSince1970, $0.bpm] }
+            scoreHRData = try? JSONEncoder().encode(raw)
+        }
+    }
+    
+    var scoreDistanceSamples: [(date: Date, endDate: Date, meters: Double)] {
+        get {
+            guard let data = scoreDistData,
+                  let raw = try? JSONDecoder().decode([[Double]].self, from: data) else { return [] }
+            return raw.compactMap { $0.count == 3 ? (Date(timeIntervalSince1970: $0[0]), Date(timeIntervalSince1970: $0[1]), $0[2]) : nil }
+        }
+        set {
+            let raw = newValue.map { [$0.date.timeIntervalSince1970, $0.endDate.timeIntervalSince1970, $0.meters] }
+            scoreDistData = try? JSONEncoder().encode(raw)
         }
     }
 }

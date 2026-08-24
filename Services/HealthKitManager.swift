@@ -29,11 +29,6 @@ final class HealthKitManager: ObservableObject {
 
     var isHealthDataAvailable: Bool { HKHealthStore.isHealthDataAvailable() }
 
-//    func requestAuthorization() async throws {
-//        let readTypes: Set<HKObjectType> = [workoutType, heartRateType, distanceType, HKSeriesType.workoutRoute()]
-//        try await healthStore.requestAuthorization(toShare: [], read: readTypes)
-//        authorizationGranted = true
-//    }
     func requestAuthorization() async throws {
         let readTypes: Set<HKObjectType> = [workoutType, heartRateType, distanceType, HKSeriesType.workoutRoute()]
         try await healthStore.requestAuthorization(toShare: [], read: readTypes)
@@ -99,6 +94,9 @@ final class HealthKitManager: ObservableObject {
             averageHeartRate: avgHR,
             heartRateSampleCount: hrSamples.count
         )
+        
+        run.scoreHeartRateSamples = hrSamples
+        run.scoreDistanceSamples = distSamples
 
         if run.isSteadyState, let speed = run.averageSpeedMetersPerSecond, let hr = avgHR {
             run.efficiencyFactor = EfficiencyCalculator.computeEF(averageSpeedMetersPerSecond: speed, averageHeartRateBPM: hr)
@@ -199,7 +197,7 @@ final class HealthKitManager: ObservableObject {
                 } catch {
                     print("Background sync error, will retry on next notification: \(error)")
                 }
-                completionHandler() // signals completion within the system time budget
+                completionHandler()
             }
         }
         healthStore.execute(query)

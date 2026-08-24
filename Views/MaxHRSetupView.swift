@@ -6,9 +6,11 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct MaxHRSetupView: View {
     @EnvironmentObject private var settings: AppSettings
+    @Environment(\.modelContext) private var modelContext
     var onContinue: () -> Void
 
     @State private var mode: Mode = .choosing
@@ -104,6 +106,7 @@ struct MaxHRSetupView: View {
                     settings.maxHRIsEstimated = true
                     finish()
                 }
+                RunScoreRecalculator.recalculateAll(modelContext: modelContext, maxHeartRate: settings.maxHeartRate)
             } label: {
                 Text("Continue").frame(maxWidth: .infinity)
             }
@@ -166,6 +169,7 @@ struct MaxHRSetupView: View {
                     settings.maxHRIsEstimated = false
                     finish()
                 }
+                RunScoreRecalculator.recalculateAll(modelContext: modelContext, maxHeartRate: settings.maxHeartRate)
             } label: {
                 Text("Continue").frame(maxWidth: .infinity)
             }

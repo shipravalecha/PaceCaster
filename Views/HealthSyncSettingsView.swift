@@ -126,12 +126,9 @@ struct HealthSyncSettingsView: View {
                     maxHRFieldFocused = true
                 }
                 .onChange(of: settings.maxHeartRate) { _, _ in
-                    // Only treat this as a manual edit if the field is actively focused —
-                    // this excludes programmatic changes like the "Estimate from age" button,
-                    // and commits the instant the user types, regardless of how they later
-                    // leave the screen (Done, back button, swipe, tap elsewhere).
                     if maxHRFieldFocused {
                         settings.maxHRIsEstimated = false
+                        RunScoreRecalculator.recalculateAll(modelContext: modelContext, maxHeartRate: settings.maxHeartRate)
                     }
                 }
 
@@ -233,6 +230,7 @@ struct HealthSyncSettingsView: View {
                 if let age = Int(ageInput), age > 0 {
                     settings.maxHeartRate = AppSettings.estimatedMaxHR(age: age)
                     settings.maxHRIsEstimated = true
+                    RunScoreRecalculator.recalculateAll(modelContext: modelContext, maxHeartRate: settings.maxHeartRate)
                 }
             }
             Button("Cancel", role: .cancel) {}

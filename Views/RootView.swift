@@ -14,39 +14,48 @@ struct RootView: View {
     @Environment(\.modelContext) private var modelContext
     @State private var isScanning = false
     @State private var didFinishSetup = false
+    @State private var authorizedButNotScanned = false
     @EnvironmentObject private var notificationManager: NotificationManager
 
     var body: some View {
-        Group {
-            if settings.hasCompletedOnboarding || didFinishSetup {
+            Group {
                 if isScanning {
                     scanningView
-                } else if !settings.hasCompletedMaxHRSetup {
-                    MaxHRSetupView {
-                        // no-op; hasCompletedMaxHRSetup flip triggers re-render below
+                } else if settings.hasCompletedOnboarding || didFinishSetup {
+                    if !settings.hasCompletedMaxHRSetup {
+                        MaxHRSetupView {
+                            // no-op; hasCompletedMaxHRSetup flip re-renders into MainDashboardView
+                        }
+                    } else {
+                        MainDashboardView()
+                    }
+                } else if authorizedButNotScanned {
+                    if !settings.hasCompletedMaxHRSetup {
+                        MaxHRSetupView {
+                            Task { await runInitialScan() }
+                        }
+                    } else {
+                        Color.clear
+                            .onAppear { Task { await runInitialScan() } }
                     }
                 } else {
-                    MainDashboardView()
-                }
-            } else {
-                WelcomeView {
-                    Task { await runInitialScan() }
+                    WelcomeView {
+                        authorizedButNotScanned = true
+                    }
                 }
             }
-        }
-        .task {
-                // Re-register the observer on every cold launch, not just the first one.
+            .task {
                 if settings.hasCompletedOnboarding {
                     registerSync()
                 }
                 settings.clearGoalRaceIfPast()
             }
-        .sheet(isPresented: $notificationManager.pendingDeepLinkToRecap) {
-            NavigationStack {
-                WeeklyRecapView(showsDoneButton: true)
+            .sheet(isPresented: $notificationManager.pendingDeepLinkToRecap) {
+                NavigationStack {
+                    WeeklyRecapView(showsDoneButton: true)
+                }
             }
         }
-    }
 
     private var scanningView: some View {
         VStack(spacing: 16) {
@@ -64,6 +73,7 @@ struct RootView: View {
         }
         try? modelContext.save()
         MilestoneChecker.rebuildAllMilestones(modelContext: modelContext, notifyForRunUUID: nil)
+        RunScoreRecalculator.recalculateAll(modelContext: modelContext, maxHeartRate: settings.maxHeartRate)
         settings.lastSyncedAt = Date()
 
         healthKitManager.registerObserverQuery { newWorkout in
