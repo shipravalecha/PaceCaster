@@ -123,6 +123,15 @@ struct RunScoreDetailView: View {
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
                 
+                if let temp = run.weatherTempF, let condition = run.weatherCondition {
+                    HStack(spacing: 4) {
+                        Image(systemName: weatherIcon(for: condition))
+                        Text("\(Int(temp))°F, \(condition)")
+                    }
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                }
+                
                 if let run = displayedRun {
                     HStack(spacing: 16) {
                         Button("View Splits") {
@@ -154,8 +163,6 @@ struct RunScoreDetailView: View {
         .frame(maxWidth: .infinity)
     }
 
-    // MARK: - Factor breakdown
-
     private func factorBreakdown(for run: RunWorkout) -> some View {
         VStack(alignment: .leading, spacing: 20) {
             factorDetail(
@@ -184,6 +191,19 @@ struct RunScoreDetailView: View {
                 stat: spikeStat(for: run),
                 explanation: "Counts how many separate times your heart rate crossed into a hard, near-maximum zone during the run - not how long you spent there. One sustained hard push counts as a single spike; several short hard bursts count as multiple. Fewer spikes means steadier, more controlled effort, which is why more points here is better even though \"spikes\" sounds like a bad thing."
             )
+            
+            if let score = run.runScore, score < 50,
+               let temp = run.weatherTempF, temp >= 85 {
+                HStack(spacing: 8) {
+                    Image(systemName: "thermometer.sun")
+                        .foregroundStyle(.orange)
+                    Text("It was \(Int(temp))°F during this run - heat can significantly affect heart rate and pacing, independent of fitness.")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+                .padding()
+                .background(Color.orange.opacity(0.1), in: RoundedRectangle(cornerRadius: 12))
+            }
         }
         .frame(maxWidth: .infinity)
         .padding()
@@ -254,8 +274,6 @@ struct RunScoreDetailView: View {
         .buttonStyle(.plain)
     }
 
-    // MARK: - How it works
-
     private var howItWorksSection: some View {
         VStack(alignment: .leading, spacing: 10) {
             Text("How Run Score works")
@@ -266,8 +284,6 @@ struct RunScoreDetailView: View {
         }
         .frame(maxWidth: .infinity, alignment: .leading)
     }
-
-    // MARK: - History
 
     private var historySection: some View {
         VStack(alignment: .leading, spacing: 12) {
@@ -321,6 +337,18 @@ struct RunScoreDetailView: View {
         case 70..<90: return .blue
         case 50..<70: return .orange
         default: return .red
+        }
+    }
+    
+    private func weatherIcon(for condition: String) -> String {
+        switch condition {
+        case "Clear": return "sun.max"
+        case "Partly Cloudy": return "cloud.sun"
+        case "Foggy": return "cloud.fog"
+        case "Drizzle", "Rain", "Rain Showers": return "cloud.rain"
+        case "Snow", "Snow Showers": return "cloud.snow"
+        case "Thunderstorm": return "cloud.bolt.rain"
+        default: return "cloud"
         }
     }
 }

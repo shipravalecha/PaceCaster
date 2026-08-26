@@ -32,6 +32,8 @@ final class RunWorkout {
     var scoreComputedForMaxHR: Int?
     var scoreHRData: Data?
     var scoreDistData: Data?
+    var weatherTempF: Double?
+    var weatherCondition: String?
 
     init(healthKitUUID: UUID,
          startDate: Date,

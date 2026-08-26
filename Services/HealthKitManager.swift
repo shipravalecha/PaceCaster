@@ -109,6 +109,17 @@ final class HealthKitManager: ObservableObject {
         }
         run.routeCoordinates = downsample(rawRoute)
         
+        if let firstCoordinate = run.routeCoordinates.first {
+            if let weather = await WeatherService.fetchHistoricalWeather(
+                latitude: firstCoordinate.latitude,
+                longitude: firstCoordinate.longitude,
+                date: workout.startDate
+            ) {
+                run.weatherTempF = weather.tempF
+                run.weatherCondition = weather.condition
+            }
+        }
+        
         let sortedDistSamples = distSamples.sorted { $0.date < $1.date }
         var cumulative: Double = 0
         var timeline: [(Double, Double)] = []
