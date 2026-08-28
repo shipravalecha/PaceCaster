@@ -38,6 +38,7 @@ struct MilestonesSection: View {
     private func milestoneRow(_ milestone: Milestone) -> some View {
         HStack(spacing: 12) {
             Text(milestone.type.emoji).font(.title2)
+                .accessibilityHidden(true)
             VStack(alignment: .leading, spacing: 2) {
                 Text(milestone.type.rawValue).font(.subheadline.weight(.medium))
                 Text(milestone.achievedDate.formatted(date: .abbreviated, time: .omitted))
@@ -49,6 +50,8 @@ struct MilestonesSection: View {
                 .font(.subheadline.weight(.semibold))
         }
         .padding()
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("\(milestone.type.rawValue), \(valueDisplay(for: milestone)), achieved \(milestone.achievedDate.formatted(date: .abbreviated, time: .omitted))")
     }
 
     private func valueDisplay(for milestone: Milestone) -> String {

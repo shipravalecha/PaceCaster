@@ -29,6 +29,7 @@ struct TrainingLoadSection: View {
 
                     ProgressView(value: min(ratio, 2.0), total: 2.0)
                         .tint(result.status.color)
+                        .accessibilityHidden(true)
 
                     Text(message(for: result.status, ratio: ratio))
                         .font(.caption)
@@ -36,6 +37,9 @@ struct TrainingLoadSection: View {
                 }
                 .padding()
                 .background(.thinMaterial, in: RoundedRectangle(cornerRadius: 16))
+                .accessibilityElement(children: .ignore)
+                .accessibilityLabel("Training Load")
+                .accessibilityValue("\(result.status.label), \(String(format: "%.2f", ratio)) times your recent average. \(message(for: result.status, ratio: ratio))")
             } else {
                 Text("Keep logging runs - we need about 3 weeks of history to gauge your training load.")
                     .font(.subheadline)

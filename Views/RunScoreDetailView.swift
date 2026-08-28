@@ -88,6 +88,7 @@ struct RunScoreDetailView: View {
                     .foregroundStyle(canGoOlder ? .secondary : Color.secondary.opacity(0.25))
             }
             .disabled(!canGoOlder)
+            .accessibilityLabel("Previous run")
 
             VStack(spacing: 8) {
                 ZStack {
@@ -105,6 +106,9 @@ struct RunScoreDetailView: View {
                 }
                 .frame(width: 120, height: 120)
                 .contentShape(Circle())
+                .accessibilityElement(children: .ignore)
+                .accessibilityLabel("Run Score")
+                .accessibilityValue("\(run.runScore ?? 0), \(RunScoreLabel.forScore(run.runScore ?? 0).rawValue)")
                 .gesture(
                     DragGesture(minimumDistance: 20, coordinateSpace: .local)
                         .onEnded { value in
@@ -159,6 +163,7 @@ struct RunScoreDetailView: View {
                     .foregroundStyle(canGoNewer ? .secondary : Color.secondary.opacity(0.25))
             }
             .disabled(!canGoNewer)
+            .accessibilityLabel("Next run")
         }
         .frame(maxWidth: .infinity)
     }
@@ -214,10 +219,12 @@ struct RunScoreDetailView: View {
         VStack(alignment: .leading, spacing: 8) {
             HStack {
                 Circle().fill(color).frame(width: 8, height: 8)
+                    .accessibilityHidden(true)
                 Text(title).font(.headline)
                 Spacer()
                 Text("\(points)/\(outOf)").font(.headline).foregroundStyle(.secondary)
             }
+            .accessibilityElement(children: .combine)
             Text(stat)
                 .font(.subheadline)
                 .foregroundStyle(.primary)
@@ -329,6 +336,9 @@ struct RunScoreDetailView: View {
         .padding()
         .background(run.healthKitUUID == displayedRun?.healthKitUUID ? Color.secondary.opacity(0.08) : Color.clear)
         .contentShape(Rectangle())
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel("\(run.startDate.formatted(date: .abbreviated, time: .omitted)), score \(run.runScore ?? 0)")
+        .accessibilityAddTraits(.isButton)
     }
 
     private func scoreColor(_ score: Int) -> Color {

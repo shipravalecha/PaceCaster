@@ -96,11 +96,13 @@ struct RunSplitsView: View {
                 .font(.subheadline.weight(.bold))
                 .foregroundStyle(.orange)
                 .frame(maxWidth: .infinity, alignment: .leading)
+                .dynamicTypeSize(...DynamicTypeSize.accessibility1)
 
             Text(SplitCalculator.formatPace(seconds: split.splitSeconds, distanceMeters: split.splitDistanceMeters, unit: settings.measurementUnit))
                 .font(.subheadline.weight(.bold))
                 .foregroundStyle(.blue)
                 .frame(maxWidth: .infinity, alignment: .leading)
+                .dynamicTypeSize(...DynamicTypeSize.accessibility1)
 
             Group {
                 if let hr = split.avgHeartRate {
@@ -112,8 +114,11 @@ struct RunSplitsView: View {
             }
             .foregroundStyle(.red)
             .frame(maxWidth: .infinity, alignment: .trailing)
+            .dynamicTypeSize(...DynamicTypeSize.accessibility1)
         }
         .padding(.vertical, 10)
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(splitAccessibilityLabel(split))
     }
     
     private var halfSplit: HalfSplitResult? {
@@ -189,8 +194,6 @@ struct RunSplitsView: View {
         }
     }
 
-
-
     private func paceDisplay(_ secondsPerMile: Double) -> String {
         let unitSeconds = settings.measurementUnit == .miles ? secondsPerMile : secondsPerMile / 1.60934
         let m = Int(unitSeconds) / 60
@@ -208,5 +211,16 @@ struct RunSplitsView: View {
         case .even:
             return "Your pace stayed nearly identical across both halves."
         }
+    }
+    
+    private func splitAccessibilityLabel(_ split: Split) -> String {
+        var label = "\(split.label), time \(SplitCalculator.formatDuration(seconds: split.splitSeconds))"
+        if !split.isPartial {
+            label += ", pace \(SplitCalculator.formatPace(seconds: split.splitSeconds, distanceMeters: split.splitDistanceMeters, unit: settings.measurementUnit))"
+        }
+        if let hr = split.avgHeartRate {
+            label += ", heart rate \(Int(hr)) beats per minute"
+        }
+        return label
     }
 }

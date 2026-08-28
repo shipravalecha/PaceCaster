@@ -148,6 +148,10 @@ struct HealthSyncSettingsView: View {
                 .onTapGesture {
                     maxHRFieldFocused = true
                 }
+                .accessibilityElement(children: .combine)
+                .accessibilityLabel("Max Heart Rate, \(settings.maxHeartRate) beats per minute")
+                .accessibilityHint("Double tap to edit")
+                
                 .onChange(of: settings.maxHeartRate) { _, _ in
                     if maxHRFieldFocused {
                         settings.maxHRIsEstimated = false

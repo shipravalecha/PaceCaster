@@ -89,6 +89,10 @@ struct MainDashboardView: View {
                             .foregroundStyle(.tertiary)
                     }
                 }
+                
+                .accessibilityElement(children: .ignore)
+                .accessibilityLabel("Aerobic Baseline")
+                .accessibilityValue(accessibleBaselineValue(ef: ef))
 
                 Divider()
 
@@ -101,24 +105,26 @@ struct MainDashboardView: View {
                     HStack(spacing: 20) {
                         VStack(spacing: 2) {
                             Text("Distance").font(.caption).foregroundStyle(.secondary)
-                            Text(viewModel.latestRunDistanceDisplay).font(.headline)
+                            Text(viewModel.latestRunDistanceDisplay).font(.headline).dynamicTypeSize(...DynamicTypeSize.accessibility1)
                         }
                         VStack(spacing: 2) {
                             Text("Pace").font(.caption).foregroundStyle(.secondary)
-                            Text(viewModel.latestRunPaceDisplay).font(.headline)
+                            Text(viewModel.latestRunPaceDisplay).font(.headline).dynamicTypeSize(...DynamicTypeSize.accessibility1)
                         }
                         VStack(spacing: 2) {
                             Text("Heart Rate").font(.caption).foregroundStyle(.secondary)
-                                Text(viewModel.latestRunHRDisplay)
-                                    .font(.headline)
-                                    .foregroundStyle(
-                                        viewModel.latestRunHRIsFlagged ? .red :
-                                        (viewModel.latestRunHRDisplay == "No data" ? .secondary : .primary)
-                                    )
-
+                            Text(viewModel.latestRunHRDisplay)
+                                .font(.headline).dynamicTypeSize(...DynamicTypeSize.accessibility1)
+                                .foregroundStyle(
+                                    viewModel.latestRunHRIsFlagged ? .red :
+                                    (viewModel.latestRunHRDisplay == "No data" ? .secondary : .primary)
+                                )
                         }
                     }
                     .frame(maxWidth: .infinity)
+                    .accessibilityElement(children: .ignore)
+                    .accessibilityLabel("Last run")
+                    .accessibilityValue("Distance \(viewModel.latestRunDistanceDisplay), Pace \(viewModel.latestRunPaceDisplay), Heart Rate \(viewModel.latestRunHRDisplay)\(viewModel.latestRunHRIsFlagged ? ", flagged as low sample count" : "")")
                 }
                 
                 if viewModel.latestRun != nil {
@@ -180,6 +186,9 @@ struct MainDashboardView: View {
                         Text("\(score)").font(.title3.weight(.bold))
                     }
                     .frame(width: 64, height: 64)
+                    .accessibilityElement(children: .ignore)
+                    .accessibilityLabel("Run Score")
+                    .accessibilityValue("\(score), \(label)")
                     
                     Image(systemName: "chevron.right.circle.fill")
                         .font(.title3)
@@ -237,6 +246,8 @@ struct MainDashboardView: View {
         .overlay(
             RoundedRectangle(cornerRadius: 16).stroke(Color.blue.opacity(0.2), lineWidth: 1)
         )
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(goalRaceAccessibilityLabel)
     }
     
     private var spikeSubtitle: String {
@@ -248,10 +259,12 @@ struct MainDashboardView: View {
     private func factorRow(title: String, points: Int, outOf: Int, color: Color) -> some View {
         HStack {
             Circle().fill(color).frame(width: 8, height: 8)
+                .accessibilityHidden(true)
             Text(title).font(.subheadline)
             Spacer()
             Text("\(points)/\(outOf)").font(.subheadline.weight(.medium)).foregroundStyle(.secondary)
         }
+        .accessibilityElement(children: .combine)
     }
     private func scoreColor(_ score: Int) -> Color {
         switch score {
@@ -324,5 +337,28 @@ struct MainDashboardView: View {
         .padding(.vertical, 4)
         .background(color.opacity(0.12), in: Capsule())
         .padding(.bottom, 8) // align baseline with the large number's baseline
+    }
+    
+    private func accessibleBaselineValue(ef: Double) -> String {
+        var value = String(format: "%.2f", ef)
+        if let direction = viewModel.efTrendDirection, let percent = viewModel.efTrendPercentDisplay {
+            let directionWord = direction == .up ? "up" : (direction == .down ? "down" : "unchanged")
+            value += ", \(directionWord) \(percent) from previous run"
+        }
+        if let date = viewModel.baselineDate {
+            value += ", from run on \(date.formatted(date: .abbreviated, time: .omitted))"
+        }
+        return value
+    }
+    
+    private var goalRaceAccessibilityLabel: String {
+        guard let days = viewModel.goalRaceDaysRemaining, let label = viewModel.goalRaceLabel else { return "" }
+        var text = days == 0 ? "Race day, \(label)" : "\(days) days to your \(label)"
+        if let finish = viewModel.goalRacePredictedFinish, let split = viewModel.goalRaceSplitPace {
+            text += ", projected finish \(finish), target split \(split)"
+        } else {
+            text += ", complete a qualifying run to see your projected finish"
+        }
+        return text
     }
 }

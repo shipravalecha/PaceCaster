@@ -71,6 +71,8 @@ struct WeeklyRecapView: View {
         .frame(maxWidth: .infinity)
         .padding()
         .background(.thinMaterial, in: RoundedRectangle(cornerRadius: 12))
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("\(title), \(value)")
     }
 
     private func bestRunCard(_ run: RunWorkout) -> some View {
@@ -95,6 +97,8 @@ struct WeeklyRecapView: View {
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding()
         .background(.thinMaterial, in: RoundedRectangle(cornerRadius: 16))
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("Best run, \(run.startDate.formatted(date: .abbreviated, time: .omitted)), score \(run.runScore ?? 0)")
     }
 
     private var trendCard: some View {

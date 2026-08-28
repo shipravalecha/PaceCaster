@@ -76,5 +76,7 @@ struct RunRouteView: View {
         }
         .frame(height: 400)
         .clipShape(RoundedRectangle(cornerRadius: 16))
+        .accessibilityLabel("Map of run route")
+        .accessibilityHint("Visual route map; distance and route details are shown in the text above")
     }
 }
