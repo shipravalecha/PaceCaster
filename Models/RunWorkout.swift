@@ -34,6 +34,7 @@ final class RunWorkout {
     var scoreDistData: Data?
     var weatherTempF: Double?
     var weatherCondition: String?
+    var shoeID: UUID?
 
     init(healthKitUUID: UUID,
          startDate: Date,

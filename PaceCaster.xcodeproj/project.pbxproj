@@ -39,6 +39,10 @@
 		018518803039020B0005B85D /* MaxHRSetupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0185187F3039020A0005B85D /* MaxHRSetupView.swift */; };
 		01851884303CCB880005B85D /* RunScoreRecalculator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01851883303CCB870005B85D /* RunScoreRecalculator.swift */; };
 		01851886303F6BCB0005B85D /* WeatherService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01851885303F6BC90005B85D /* WeatherService.swift */; };
+		018518A3304201BF0005B85D /* Shoe.swift in Sources */ = {isa = PBXBuildFile; fileRef = 018518A2304201BD0005B85D /* Shoe.swift */; };
+		018518A5304205580005B85D /* ShoeMileageCalculator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 018518A4304205570005B85D /* ShoeMileageCalculator.swift */; };
+		018518A73042057D0005B85D /* ShoeMileageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 018518A63042057A0005B85D /* ShoeMileageView.swift */; };
+		018518A93044C7020005B85D /* AddShoeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 018518A83044C7010005B85D /* AddShoeView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -86,6 +90,10 @@
 		01851883303CCB870005B85D /* RunScoreRecalculator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RunScoreRecalculator.swift; sourceTree = "<group>"; };
 		01851885303F6BC90005B85D /* WeatherService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherService.swift; sourceTree = "<group>"; };
 		0185188B303F81980005B85D /* PaceCasterTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PaceCasterTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		018518A2304201BD0005B85D /* Shoe.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Shoe.swift; sourceTree = "<group>"; };
+		018518A4304205570005B85D /* ShoeMileageCalculator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoeMileageCalculator.swift; sourceTree = "<group>"; };
+		018518A63042057A0005B85D /* ShoeMileageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoeMileageView.swift; sourceTree = "<group>"; };
+		018518A83044C7010005B85D /* AddShoeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddShoeView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -149,6 +157,7 @@
 		0185183B300044A50005B85D /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				018518A2304201BD0005B85D /* Shoe.swift */,
 				0185186B30194D4A0005B85D /* Milestone.swift */,
 				01851840300045110005B85D /* AppSettings.swift */,
 				0185183F300044F00005B85D /* RunWorkout.swift */,
@@ -159,6 +168,7 @@
 		0185183C300044AF0005B85D /* Services */ = {
 			isa = PBXGroup;
 			children = (
+				018518A4304205570005B85D /* ShoeMileageCalculator.swift */,
 				01851885303F6BC90005B85D /* WeatherService.swift */,
 				01851883303CCB870005B85D /* RunScoreRecalculator.swift */,
 				018518773022B7890005B85D /* TrainingLoadCalculator.swift */,
@@ -187,6 +197,8 @@
 		0185183E300044C10005B85D /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				018518A83044C7010005B85D /* AddShoeView.swift */,
+				018518A63042057A0005B85D /* ShoeMileageView.swift */,
 				0185187F3039020A0005B85D /* MaxHRSetupView.swift */,
 				0185187D3033B66F0005B85D /* RunRouteView.swift */,
 				0185187B3023EF6D0005B85D /* SplitExplainerView.swift */,
@@ -318,11 +330,14 @@
 				0185187230195C010005B85D /* WorkoutSyncHelper.swift in Sources */,
 				01851857300054F50005B85D /* HealthSyncSettingsView.swift in Sources */,
 				01851851300054D70005B85D /* HealthKitManager.swift in Sources */,
+				018518A3304201BF0005B85D /* Shoe.swift in Sources */,
 				0185187A3022B79C0005B85D /* TrainingLoadSection.swift in Sources */,
+				018518A73042057D0005B85D /* ShoeMileageView.swift in Sources */,
 				0185187E3033B6700005B85D /* RunRouteView.swift in Sources */,
 				01851852300054DB0005B85D /* DashboardViewModel.swift in Sources */,
 				0185184F300054CF0005B85D /* PredictionEngine.swift in Sources */,
 				0185187C3023EF6E0005B85D /* SplitExplainerView.swift in Sources */,
+				018518A93044C7020005B85D /* AddShoeView.swift in Sources */,
 				0185187430216EC10005B85D /* SplitCalculator.swift in Sources */,
 				01851855300054ED0005B85D /* MainDashboardView.swift in Sources */,
 				01851854300054E90005B85D /* WelcomeView.swift in Sources */,
@@ -338,6 +353,7 @@
 				018518783022B78B0005B85D /* TrainingLoadCalculator.swift in Sources */,
 				0185186630116FE50005B85D /* NotificationManager.swift in Sources */,
 				01851850300054D30005B85D /* EfficiencyCalculator.swift in Sources */,
+				018518A5304205580005B85D /* ShoeMileageCalculator.swift in Sources */,
 				0185186E30194D7E0005B85D /* MilestoneChecker.swift in Sources */,
 				01851853300054DF0005B85D /* AnalyticsViewModel.swift in Sources */,
 				0185187630216EEC0005B85D /* RunSplitsView.swift in Sources */,

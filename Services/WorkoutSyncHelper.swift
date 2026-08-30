@@ -16,6 +16,8 @@ enum WorkoutSyncHelper {
         let descriptor = FetchDescriptor<RunWorkout>(predicate: #Predicate { $0.healthKitUUID == uuid })
         let existing = (try? modelContext.fetch(descriptor)) ?? []
         guard existing.isEmpty else { return false }
+        
+        workout.shoeID = AppSettings.shared.currentShoeID
         modelContext.insert(workout)
         try? modelContext.save()
         return true

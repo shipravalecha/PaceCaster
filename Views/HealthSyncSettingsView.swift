@@ -89,6 +89,16 @@ struct HealthSyncSettingsView: View {
             }
             
             Section {
+                NavigationLink("Shoes") {
+                    ShoeMileageView()
+                }
+            } header: {
+                Text("Gear")
+            } footer: {
+                Text("Track mileage on your running shoes and get a nudge when it's time to replace them.")
+            }
+            
+            Section {
                 Toggle("Set a Goal Race", isOn: Binding(
                     get: { settings.goalRaceDate != nil },
                     set: { isOn in

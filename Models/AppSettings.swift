@@ -56,6 +56,16 @@ final class AppSettings: ObservableObject {
     @Published var hasCompletedMaxHRSetup: Bool {
         didSet { UserDefaults.standard.set(hasCompletedMaxHRSetup, forKey: Keys.hasCompletedMaxHRSetup) }
     }
+    
+    @Published var currentShoeID: UUID? {
+        didSet {
+            if let id = currentShoeID {
+                UserDefaults.standard.set(id.uuidString, forKey: Keys.currentShoeID)
+            } else {
+                UserDefaults.standard.removeObject(forKey: Keys.currentShoeID)
+            }
+        }
+    }
 
     private enum Keys {
         static let unit = "measurementUnit"
@@ -67,6 +77,7 @@ final class AppSettings: ObservableObject {
         static let goalRaceDistance = "goalRaceDistance"
         static let goalRaceDate = "goalRaceDate"
         static let hasCompletedMaxHRSetup = "hasCompletedMaxHRSetup"
+        static let currentShoeID = "currentShoeID"
     }
 
     private init() {
@@ -97,6 +108,11 @@ final class AppSettings: ObservableObject {
         } else {
             goalRaceDistance = nil
             goalRaceDate = nil
+        }
+        if let idString = UserDefaults.standard.string(forKey: Keys.currentShoeID) {
+            currentShoeID = UUID(uuidString: idString)
+        } else {
+            currentShoeID = nil
         }
     }
     
