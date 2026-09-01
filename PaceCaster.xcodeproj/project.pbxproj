@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		010C2826304750FA0086796F /* EditShoeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 010C2825304750F90086796F /* EditShoeView.swift */; };
 		0185184D300054BE0005B85D /* RunWorkout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0185183F300044F00005B85D /* RunWorkout.swift */; };
 		0185184E300054CA0005B85D /* AppSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01851840300045110005B85D /* AppSettings.swift */; };
 		0185184F300054CF0005B85D /* PredictionEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01851841300045290005B85D /* PredictionEngine.swift */; };
@@ -56,7 +57,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		01851828300042950005B85D /* PaceCaster.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; name = PaceCaster.app; path = "/Users/shipravalecha/Desktop/HomeAssignments/PaceCaster/PaceCaster/build/Debug-iphoneos/PaceCaster.app"; sourceTree = "<absolute>"; };
+		010C28113046531D0086796F /* PaceCaster.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PaceCaster.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		010C2825304750F90086796F /* EditShoeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditShoeView.swift; sourceTree = "<group>"; };
 		0185183F300044F00005B85D /* RunWorkout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RunWorkout.swift; sourceTree = "<group>"; };
 		01851840300045110005B85D /* AppSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSettings.swift; sourceTree = "<group>"; };
 		01851841300045290005B85D /* PredictionEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PredictionEngine.swift; sourceTree = "<group>"; };
@@ -151,6 +153,7 @@
 				0185185D30016A960005B85D /* .gitignore */,
 				0185188B303F81980005B85D /* PaceCasterTests.xctest */,
 				0185188C303F81980005B85D /* PaceCasterTests */,
+				010C28113046531D0086796F /* PaceCaster.app */,
 			);
 			sourceTree = "<group>";
 		};
@@ -197,6 +200,7 @@
 		0185183E300044C10005B85D /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				010C2825304750F90086796F /* EditShoeView.swift */,
 				018518A83044C7010005B85D /* AddShoeView.swift */,
 				018518A63042057A0005B85D /* ShoeMileageView.swift */,
 				0185187F3039020A0005B85D /* MaxHRSetupView.swift */,
@@ -239,7 +243,7 @@
 			packageProductDependencies = (
 			);
 			productName = PaceCaster;
-			productReference = 01851828300042950005B85D /* PaceCaster.app */;
+			productReference = 010C28113046531D0086796F /* PaceCaster.app */;
 			productType = "com.apple.product-type.application";
 		};
 		0185188A303F81980005B85D /* PaceCasterTests */ = {
@@ -340,6 +344,7 @@
 				018518A93044C7020005B85D /* AddShoeView.swift in Sources */,
 				0185187430216EC10005B85D /* SplitCalculator.swift in Sources */,
 				01851855300054ED0005B85D /* MainDashboardView.swift in Sources */,
+				010C2826304750FA0086796F /* EditShoeView.swift in Sources */,
 				01851854300054E90005B85D /* WelcomeView.swift in Sources */,
 				018518683011702F0005B85D /* WeeklyRecapView.swift in Sources */,
 				0185185A300058320005B85D /* DebugSeeder.swift in Sources */,

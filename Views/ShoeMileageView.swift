@@ -15,6 +15,7 @@ struct ShoeMileageView: View {
     @State private var shoes: [Shoe] = []
     @State private var allRuns: [RunWorkout] = []
     @State private var showAddShoe = false
+    @State private var editingShoe: Shoe?
 
     var body: some View {
         List {
@@ -40,6 +41,11 @@ struct ShoeMileageView: View {
             }
         }
         .onAppear(perform: loadData)
+        .sheet(item: $editingShoe) { shoe in
+            EditShoeView(shoe: shoe) {
+                loadData()
+            }
+        }
     }
 
     private func shoeRow(_ shoe: Shoe) -> some View {
@@ -63,6 +69,13 @@ struct ShoeMileageView: View {
                         .background(Color.blue.opacity(0.15), in: Capsule())
                         .foregroundStyle(.blue)
                 }
+                Button {
+                    editingShoe = shoe
+                } label: {
+                    Image(systemName: "pencil.circle")
+                    .foregroundStyle(.secondary)
+                }
+                .buttonStyle(.plain)
             }
 
             HStack {

@@ -103,8 +103,6 @@ enum DebugSeeder {
         try? modelContext.save()
     }
     
-    /// Seeds a single run dated today with HR present but insufficient samples,
-    /// specifically to test the red-flagged HR display path.
     static func seedFlaggedHRRun(into modelContext: ModelContext) {
         let flaggedRun = RunWorkout(
             healthKitUUID: UUID(),
@@ -114,14 +112,10 @@ enum DebugSeeder {
             averageHeartRate: 149,
             heartRateSampleCount: 6   // below the 10-sample minimum
         )
-        // Deliberately NOT computing efficiencyFactor — this run should never
-        // qualify as steady-state, so it shouldn't have an EF value at all.
         modelContext.insert(flaggedRun)
         try? modelContext.save()
     }
     
-    /// Seeds a single run that beats all three milestone thresholds at once,
-    /// so you can verify detection, notification, and the Trends list in one shot.
     static func seedMilestoneBeatingRun(into modelContext: ModelContext) {
         let descriptor = FetchDescriptor<RunWorkout>()
         let allRuns = (try? modelContext.fetch(descriptor)) ?? []
@@ -203,6 +197,23 @@ enum DebugSeeder {
         for run in runs {
             modelContext.insert(run)
         }
+        try? modelContext.save()
+    }
+    
+    static func seedRunForCurrentShoe(into modelContext: ModelContext) {
+        let run = RunWorkout(
+            healthKitUUID: UUID(),
+            startDate: Date(),
+            durationSeconds: 30 * 60,
+            distanceMeters: 5000,
+            averageHeartRate: 150,
+            heartRateSampleCount: 30
+        )
+        if let speed = run.averageSpeedMetersPerSecond {
+            run.efficiencyFactor = EfficiencyCalculator.computeEF(averageSpeedMetersPerSecond: speed, averageHeartRateBPM: 150)
+        }
+        run.shoeID = AppSettings.shared.currentShoeID
+        modelContext.insert(run)
         try? modelContext.save()
     }
 }

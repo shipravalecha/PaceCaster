@@ -208,6 +208,12 @@ struct HealthSyncSettingsView: View {
                 Button("Seed Training Load Spike") {
                     DebugSeeder.seedTrainingLoadSpike(into: modelContext)
                 }
+                Button("Fix Mistagged Shoe Runs") {
+                    WorkoutSyncHelper.fixMistaggedShoeRuns(modelContext: modelContext)
+                }
+                Button("Seed Run for Current Shoe") {
+                    DebugSeeder.seedRunForCurrentShoe(into: modelContext)
+                }
             }
             #endif
             
