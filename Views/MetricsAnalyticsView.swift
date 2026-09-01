@@ -16,6 +16,17 @@ struct MetricsAnalyticsView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 28) {
+                Text("Trends").font(.largeTitle.bold())
+                Picker("Window", selection: Binding(
+                    get: { viewModel.timeWindowDays },
+                    set: { viewModel.selectTimeWindow($0) }
+                )) {
+                    Text("30d").tag(30)
+                    Text("60d").tag(60)
+                    Text("90d").tag(90)
+                }
+                .pickerStyle(.segmented)
+
                 efficiencySection
                 volumeSection
                 TrainingLoadSection()
@@ -23,7 +34,6 @@ struct MetricsAnalyticsView: View {
             }
             .padding()
         }
-        .navigationTitle("Trends")
         .onAppear { viewModel.configure(modelContext: modelContext) }
     }
 
@@ -31,18 +41,11 @@ struct MetricsAnalyticsView: View {
         VStack(alignment: .leading, spacing: 12) {
             Text("Aerobic Efficiency Trend").font(.headline)
 
-            Picker("Window", selection: Binding(
-                get: { viewModel.timeWindowDays },
-                set: { viewModel.selectTimeWindow($0) }
-            )) {
-                Text("30d").tag(30)
-                Text("60d").tag(60)
-                Text("90d").tag(90)
-            }
-            .pickerStyle(.segmented)
-
             if viewModel.efTrend.count < 2 {
-                Text("Not enough data yet to chart your efficiency trend for this window.")
+                Text(viewModel.efTrend.isEmpty
+                     ? "No qualifying runs in this window yet to chart your efficiency trend."
+                     : "Only 1 qualifying run in this window - you need at least 2 to chart your efficiency trend.")
+                    .font(.subheadline)
                     .foregroundStyle(.secondary)
                     .frame(maxWidth: .infinity, minHeight: 120)
             } else {
@@ -60,6 +63,7 @@ struct MetricsAnalyticsView: View {
 
             if viewModel.weeklyVolume.isEmpty {
                 Text("No running workouts recorded yet.")
+                    .font(.subheadline)
                     .foregroundStyle(.secondary)
                     .frame(maxWidth: .infinity, minHeight: 120)
             } else {

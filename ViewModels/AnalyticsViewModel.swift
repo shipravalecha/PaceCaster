@@ -51,6 +51,7 @@ final class AnalyticsViewModel: ObservableObject {
     func selectTimeWindow(_ days: Int) {
         timeWindowDays = days
         updateTrend()
+        updateWeeklyVolume()
     }
 
     private func updateTrend() {
@@ -62,7 +63,11 @@ final class AnalyticsViewModel: ObservableObject {
 
     private func updateWeeklyVolume() {
         let calendar = Calendar.current
-        let grouped = Dictionary(grouping: allWorkouts) { workout -> Date in
+        let cutoff = calendar.date(byAdding: .day, value: -timeWindowDays, to: Date()) ?? Date()
+
+        let recentWorkouts = allWorkouts.filter { $0.startDate >= cutoff }
+
+        let grouped = Dictionary(grouping: recentWorkouts) { workout -> Date in
             calendar.dateInterval(of: .weekOfYear, for: workout.startDate)?.start ?? workout.startDate
         }
         weeklyVolume = grouped.map { weekStart, workouts in
