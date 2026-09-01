@@ -6,11 +6,15 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct RunSplitsView: View {
     let run: RunWorkout
     @EnvironmentObject private var settings: AppSettings
+    @Environment(\.modelContext) private var modelContext
     @State private var showSplitInfo = false
+    @State private var allShoes: [Shoe] = []
+    @State private var showShoePicker: ShoePickerTrigger?
 
     private var splits: [Split] {
         SplitCalculator.computeSplits(
@@ -24,7 +28,6 @@ struct RunSplitsView: View {
         ScrollView {
             VStack(spacing: 20) {
                 header
-            
                 if splits.isEmpty {
                     Text("Split data isn't available for this run. Try syncing again to rebuild it.")
                         .font(.subheadline)
@@ -42,6 +45,12 @@ struct RunSplitsView: View {
         }
         .navigationTitle("Splits")
         .navigationBarTitleDisplayMode(.inline)
+        .onAppear(perform: loadShoes)
+        .sheet(item: $showShoePicker) { _ in
+            ShoePickerView(run: run) {
+                loadShoes()
+            }
+        }
     }
 
     private var header: some View {
@@ -54,8 +63,28 @@ struct RunSplitsView: View {
                 Text(String(format: "%.2f %@", unitDistance, settings.measurementUnit == .miles ? "mi" : "km"))
                     .font(.title2.weight(.bold))
             }
+            
+            Button {
+                showShoePicker = ShoePickerTrigger()
+            } label: {
+                HStack(spacing: 4) {
+                    Image(systemName: "figure.run.circle")
+                    Text(currentShoeName)
+                    Image(systemName: "chevron.down")
+                        .font(.caption2)
+                }
+                .font(.caption)
+                .foregroundStyle(.secondary)
+            }
+            .padding(.top, 4)
         }
         .frame(maxWidth: .infinity)
+        .onAppear(perform: loadShoes)
+        .sheet(item: $showShoePicker) { _ in
+            ShoePickerView(run: run) {
+                loadShoes()
+            }
+        }
     }
 
     private var splitsTable: some View {
@@ -222,5 +251,21 @@ struct RunSplitsView: View {
             label += ", heart rate \(Int(hr)) beats per minute"
         }
         return label
+    }
+    
+    private var currentShoeName: String {
+        guard let shoeID = run.shoeID, let shoe = allShoes.first(where: { $0.id == shoeID }) else {
+            return "No shoe assigned"
+        }
+        return shoe.name
+    }
+
+    private func loadShoes() {
+        let descriptor = FetchDescriptor<Shoe>(sortBy: [SortDescriptor(\.startDate, order: .reverse)])
+        allShoes = (try? modelContext.fetch(descriptor)) ?? []
+    }
+    
+    private struct ShoePickerTrigger: Identifiable {
+        let id = UUID()
     }
 }
