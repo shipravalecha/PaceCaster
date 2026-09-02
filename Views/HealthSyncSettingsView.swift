@@ -214,6 +214,12 @@ struct HealthSyncSettingsView: View {
                 Button("Seed Run for Current Shoe") {
                     DebugSeeder.seedRunForCurrentShoe(into: modelContext)
                 }
+                Button("Seed 350mi on Current Shoe") {
+                    DebugSeeder.seedShoeMileage(into: modelContext, totalMiles: 350)
+                }
+                Button("Seed 420mi on Current Shoe") {
+                    DebugSeeder.seedShoeMileage(into: modelContext, totalMiles: 420)
+                }
             }
             #endif
             

@@ -1,10 +1,3 @@
-//
-//  ShoeMileageView.swift
-//  PaceCaster
-//
-//  Created by Shipra Valecha on 8/28/26.
-//
-
 import SwiftUI
 import SwiftData
 
@@ -32,6 +25,14 @@ struct ShoeMileageView: View {
         .toolbar {
             EditButton()
         }
+        .safeAreaInset(edge: .bottom) {
+            Text("Most runners replace shoes every 300–500 miles as cushioning wears down, which can increase injury risk.")
+                .font(.caption)
+                .foregroundStyle(.secondary)
+                .padding()
+                .frame(maxWidth: .infinity)
+                .background(.thinMaterial)
+        }
         .sheet(isPresented: $showAddShoe) {
             AddShoeView { name in
                 let shoe = Shoe(name: name)
@@ -40,12 +41,12 @@ struct ShoeMileageView: View {
                 loadData()
             }
         }
-        .onAppear(perform: loadData)
         .sheet(item: $editingShoe) { shoe in
             EditShoeView(shoe: shoe) {
                 loadData()
             }
         }
+        .onAppear(perform: loadData)
     }
 
     private func shoeRow(_ shoe: Shoe) -> some View {
@@ -73,7 +74,7 @@ struct ShoeMileageView: View {
                     editingShoe = shoe
                 } label: {
                     Image(systemName: "pencil.circle")
-                    .foregroundStyle(.secondary)
+                        .foregroundStyle(.secondary)
                 }
                 .buttonStyle(.plain)
             }
@@ -83,11 +84,11 @@ struct ShoeMileageView: View {
                     .font(.headline)
                 Spacer()
                 if mileage.isPastReplacement {
-                    Label("Consider replacing", systemImage: "exclamationmark.triangle.fill")
+                    Label("Time for new shoes", systemImage: "exclamationmark.triangle.fill")
                         .font(.caption)
                         .foregroundStyle(.red)
                 } else if mileage.isNearingReplacement {
-                    Label("Nearing end of life", systemImage: "exclamationmark.circle")
+                    Label("Getting worn", systemImage: "exclamationmark.circle")
                         .font(.caption)
                         .foregroundStyle(.orange)
                 }
@@ -111,8 +112,8 @@ struct ShoeMileageView: View {
     private func shoeAccessibilityLabel(shoe: Shoe, mileage: ShoeMileage, isCurrent: Bool) -> String {
         var label = "\(shoe.name), \(String(format: "%.0f", mileage.miles)) miles"
         if isCurrent { label += ", current shoe" }
-        if mileage.isPastReplacement { label += ", consider replacing" }
-        else if mileage.isNearingReplacement { label += ", nearing end of life" }
+        if mileage.isPastReplacement { label += ", time for new shoes" }
+        else if mileage.isNearingReplacement { label += ", getting worn" }
         return label
     }
 

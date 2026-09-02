@@ -216,5 +216,56 @@ enum DebugSeeder {
         modelContext.insert(run)
         try? modelContext.save()
     }
+    
+    static func seedShoeMileage(into modelContext: ModelContext, totalMiles: Double) {
+        guard let shoeID = AppSettings.shared.currentShoeID else {
+            print("🥾 No current shoe set — set one as current before seeding mileage.")
+            return
+        }
+
+        let shoeDescriptor = FetchDescriptor<Shoe>(predicate: #Predicate { $0.id == shoeID })
+        guard let shoe = (try? modelContext.fetch(shoeDescriptor))?.first else {
+            print("🥾 Could not find the current shoe.")
+            return
+        }
+
+        let calendar = Calendar.current
+        let daysAvailable = calendar.dateComponents([.day], from: shoe.startDate, to: Date()).day ?? 0
+        guard daysAvailable > 0 else {
+            print("🥾 Shoe start date is today or later — no room to backdate seeded runs. Edit the shoe's start date further back first.")
+            return
+        }
+
+        let milesPerRun = totalMiles / Double(daysAvailable)
+        var seededMiles: Double = 0
+
+        for dayOffset in 0..<daysAvailable {
+            let runDate = calendar.date(byAdding: .day, value: -dayOffset, to: Date())!
+            guard runDate >= shoe.startDate else { break }
+
+            let distanceMeters = milesPerRun * 1609.344
+            let paceSecPerMile: Double = 540
+            let duration = milesPerRun * paceSecPerMile
+
+            let run = RunWorkout(
+                healthKitUUID: UUID(),
+                startDate: runDate,
+                durationSeconds: duration,
+                distanceMeters: distanceMeters,
+                averageHeartRate: 150,
+                heartRateSampleCount: 30
+            )
+            if let speed = run.averageSpeedMetersPerSecond {
+                run.efficiencyFactor = EfficiencyCalculator.computeEF(averageSpeedMetersPerSecond: speed, averageHeartRateBPM: 150)
+            }
+            run.shoeID = shoeID
+
+            modelContext.insert(run)
+            seededMiles += milesPerRun
+        }
+
+        try? modelContext.save()
+        print("🥾 Seeded \(String(format: "%.1f", seededMiles)) miles across \(daysAvailable) days onto current shoe")
+    }
 }
 #endif
