@@ -14,12 +14,10 @@ enum EfficiencyCalculator {
         return (averageSpeedMetersPerSecond / averageHeartRateBPM) * 100
     }
 
-    /// Req 6.2 / 4.4: most recent EF, shown on dashboard as Aerobic_Baseline
     static func latestBaseline(_ workouts: [RunWorkout]) -> RunWorkout? {
         workouts.filter { $0.isSteadyState }.sorted { $0.startDate > $1.startDate }.first
     }
 
-    /// Req 5.2: aggregated baseline = median of top-3 qualifying runs (by EF) in last 30 days
     static func aggregatedBaseline(from workouts: [RunWorkout], referenceDate: Date = Date()) -> RunWorkout? {
         let cutoff = Calendar.current.date(byAdding: .day, value: -30, to: referenceDate) ?? referenceDate
         let qualifying = workouts
@@ -33,7 +31,6 @@ enum EfficiencyCalculator {
         return sortedByEF[sortedByEF.count / 2]
     }
     
-    /// Second-most-recent qualifying run, used to compute trend vs the current baseline.
     static func previousBaseline(_ workouts: [RunWorkout]) -> RunWorkout? {
         let qualifying = workouts.filter { $0.isSteadyState }.sorted { $0.startDate > $1.startDate }
         guard qualifying.count >= 2 else { return nil }

@@ -36,8 +36,6 @@ struct RunScoreResult {
 
 enum RunScoreCalculator {
 
-    /// heartRateSamples: raw HR samples, sorted ascending by date.
-    /// distanceSamples: incremental distance samples (meters recorded at that instant), sorted ascending.
     static func compute(
         heartRateSamples: [(date: Date, bpm: Double)],
         distanceSamples: [(date: Date, endDate: Date, meters: Double)],
@@ -107,8 +105,6 @@ enum RunScoreCalculator {
             )
     }
 
-    /// Buckets the run into 60-second windows, computes EF per bucket, and scores
-    /// consistency (lower variability across buckets = better pacing discipline).
     private static func computePacingControl(
         heartRateSamples: [(date: Date, bpm: Double)],
         distanceSamples: [(date: Date, endDate: Date, meters: Double)]

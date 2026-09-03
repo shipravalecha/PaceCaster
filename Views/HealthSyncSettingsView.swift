@@ -229,7 +229,6 @@ struct HealthSyncSettingsView: View {
                         Task {
                             if enabled {
                                 isRequestingPermission = true
-                                print("isRequestingPermission changed")
                                 defer { isRequestingPermission = false }
                                 await notificationManager.requestAuthorizationIfNeeded()
                                 try? await Task.sleep(nanoseconds: 400_000_000)

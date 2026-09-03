@@ -127,11 +127,10 @@ struct HalfSplitResult {
     let firstHalfPaceSeconds: Double
     let secondHalfPaceSeconds: Double
     let verdict: SplitVerdict
-    let differenceSeconds: Double // always positive; how far apart the two halves were
+    let differenceSeconds: Double
 }
 
 extension SplitCalculator {
-    /// Compares pace in the first half of the run's distance vs. the second half.
     static func computeHalfSplit(
         timeline: [(elapsedSeconds: Double, cumulativeMeters: Double)]
     ) -> HalfSplitResult? {
@@ -142,7 +141,6 @@ extension SplitCalculator {
         let totalDistance = last.cumulativeMeters
         let halfwayDistance = totalDistance / 2
 
-        // Find the elapsed time at the halfway distance point via linear interpolation.
         var halfwayTime: Double?
         var prev: (elapsedSeconds: Double, cumulativeMeters: Double) = (0, 0)
         for point in sorted {
@@ -164,10 +162,7 @@ extension SplitCalculator {
         let secondHalfDuration = totalTime - halfwayTime
         guard firstHalfDuration > 0, secondHalfDuration > 0 else { return nil }
 
-        // Pace = seconds per meter, scaled up; since both halves cover the same
-        // distance (by definition), comparing raw durations is equivalent to
-        // comparing pace, but we express it as pace-per-unit for display later.
-        let firstHalfPace = firstHalfDuration / (halfwayDistance / 1609.344) // sec per mile, unit-adjusted at display time if needed
+        let firstHalfPace = firstHalfDuration / (halfwayDistance / 1609.344)
         let secondHalfPace = secondHalfDuration / (halfwayDistance / 1609.344)
 
         let diff = secondHalfPace - firstHalfPace

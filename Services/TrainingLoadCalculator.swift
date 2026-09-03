@@ -35,8 +35,6 @@ struct TrainingLoadResult {
 }
 
 enum TrainingLoadCalculator {
-    /// Acute:Chronic Workload Ratio — compares the last 7 days of running
-    /// distance against the trailing 4-week weekly average.
     static func compute(from workouts: [RunWorkout], referenceDate: Date = Date()) -> TrainingLoadResult {
         let calendar = Calendar.current
         guard let sevenDaysAgo = calendar.date(byAdding: .day, value: -7, to: referenceDate),
@@ -44,8 +42,6 @@ enum TrainingLoadCalculator {
             return TrainingLoadResult(ratio: nil, status: .normal)
         }
 
-        // Require at least ~3 weeks of history before trusting the ratio —
-        // otherwise a single early run can produce a misleadingly extreme number.
         guard let earliestRun = workouts.map({ $0.startDate }).min(),
               let daysOfHistory = calendar.dateComponents([.day], from: earliestRun, to: referenceDate).day,
               daysOfHistory >= 21 else {

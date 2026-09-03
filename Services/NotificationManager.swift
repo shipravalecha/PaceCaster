@@ -156,8 +156,6 @@ extension NotificationManager: UNUserNotificationCenterDelegate {
             if identifier == NotificationManager.weeklyRecapIdentifier {
                 NotificationManager.shared.pendingDeepLinkToRecap = true
             }
-            // Milestone notifications (identifier starts with "milestone-") currently
-            // have no deep link - tapping them just opens the app normally, which is fine.
             completionHandler()
         }
     }

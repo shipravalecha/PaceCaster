@@ -39,8 +39,6 @@ final class HealthKitManager: ObservableObject {
         healthStore.authorizationStatus(for: type)
     }
 
-    // MARK: - Scanning
-
     func scanLast90Days() async throws -> [RunWorkout] {
         let start = Calendar.current.date(byAdding: .day, value: -90, to: Date())!
         return try await fetchRunningWorkouts(since: start)
@@ -176,9 +174,6 @@ final class HealthKitManager: ObservableObject {
                 }
                 let distSamples = (samples as? [HKQuantitySample]) ?? []
 
-                // If multiple sources contributed distance data, use only the source
-                // that contributed the most samples (typically the Watch during the
-                // workout itself) rather than blending overlapping sources together.
                 let bySource = Dictionary(grouping: distSamples) { $0.sourceRevision.source.bundleIdentifier }
                 let dominantSource = bySource.max { $0.value.count < $1.value.count }?.value ?? distSamples
 
@@ -189,8 +184,6 @@ final class HealthKitManager: ObservableObject {
             healthStore.execute(query)
         }
     }
-
-    // MARK: - Background sync (Req 3)
 
     func registerObserverQuery(onNewWorkout: @escaping (RunWorkout) -> Void) {
         let query = HKObserverQuery(sampleType: workoutType, predicate: nil) { [weak self] _, completionHandler, error in
@@ -252,7 +245,6 @@ final class HealthKitManager: ObservableObject {
         return allLocations.map { $0.coordinate }
     }
 
-    /// GPS routes can have thousands of points - downsample for storage and rendering.
     private func downsample(_ coordinates: [CLLocationCoordinate2D], maxPoints: Int = 300) -> [CLLocationCoordinate2D] {
         guard coordinates.count > maxPoints else { return coordinates }
         let stride = Double(coordinates.count) / Double(maxPoints)
